@@ -2,20 +2,29 @@ import { useState } from "react";
 import AuthLayout from "../../layouts/AuthLayout/AuthLayout";
 import "./Login.css";
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin, onRegister }) => {
+  const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(""); // 👈 nuevo estado para email
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // 👉 llamamos a la función que viene de App.jsx
-    onLogin(username, password);
+    if (isRegister) {
+      onRegister(username, email, password); // 👉 registro con email
+    } else {
+      onLogin(username, password);
+    }
   };
 
   return (
     <AuthLayout>
-      <h2 className="login-title">Iniciar Sesión</h2>
+      <h2 className="login-title">
+        {isRegister ? "Crear Cuenta" : "Iniciar Sesión"}
+      </h2>
+
       <form className="login-form" onSubmit={handleSubmit}>
+        {/* Usuario */}
         <div className="form-group">
           <label htmlFor="username">Usuario</label>
           <input
@@ -27,6 +36,21 @@ const Login = ({ onLogin }) => {
           />
         </div>
 
+        {/* 👇 Campo extra solo cuando está en modo registro */}
+        {isRegister && (
+          <div className="form-group">
+            <label htmlFor="email">Correo electrónico</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Ingrese su correo"
+            />
+          </div>
+        )}
+
+        {/* Contraseña */}
         <div className="form-group">
           <label htmlFor="password">Contraseña</label>
           <input
@@ -38,12 +62,20 @@ const Login = ({ onLogin }) => {
           />
         </div>
 
-        <button type="submit" className="btn-login">Ingresar</button>
+        <button type="submit" className="btn-login">
+          {isRegister ? "Registrarse" : "Ingresar"}
+        </button>
       </form>
 
       <p className="register-text">
-        ¿No tienes cuenta?{" "}
-        <button className="btn-register">Crea una aquí</button>
+        {isRegister ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?"}{" "}
+        <button
+          type="button"
+          className="btn-register"
+          onClick={() => setIsRegister(!isRegister)}
+        >
+          {isRegister ? "Inicia sesión aquí" : "Crea una aquí"}
+        </button>
       </p>
     </AuthLayout>
   );
