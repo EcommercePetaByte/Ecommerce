@@ -1,0 +1,137 @@
+:root{
+  --bg:#0e1114; --surface:#12181f; --surface-2:#0f1a22;
+  --brand:#2d6f7e; --brand-2:#6fd0de; --text:#e8f0f2; --muted:#9fb3bd; --ok:#a3ffd1;
+
+  --radius:18px; --shadow:0 10px 30px rgba(0,0,0,.35); --shadow-soft:0 6px 18px rgba(0,0,0,.25);
+
+  --maxw: clamp(1200px, 96vw, 1600px);
+  --card-min: 260px;
+
+  /* Altura del carrusel */
+  --carousel-min-h: 220px; --carousel-vh: 30vh; --carousel-max-h: 360px;
+}
+
+*{ box-sizing:border-box }
+html, body, #root{ height:100% }
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+  line-height:1.4;
+}
+a{ color:inherit; text-decoration:none }
+figure{ margin:0 }
+
+
+/* =============================== LAYOUT =============================== */
+.container{
+  width:min(96vw, var(--maxw));
+  margin:24px auto 80px;
+  padding:0 12px;
+}
+.section-title{
+  margin:28px 0 12px; font-size:clamp(20px,2.4vw,26px);
+  font-weight:800; letter-spacing:.3px; color:#eaf6f8;
+}
+
+/* =============================== CARRUSEL ============================== */
+.carousel-wrap{
+  position:relative;
+  width:100%;
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.carousel{
+  display:flex;
+  gap:0;
+  overflow-x:auto; overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  -ms-overflow-style:none; scrollbar-width:none;
+  touch-action:pan-x;
+}
+.carousel::-webkit-scrollbar{ display:none }
+.slide{ flex:0 0 100%; scroll-snap-align:start; }
+.slide img{
+  display:block; width:100%;
+  height:clamp(var(--carousel-min-h), var(--carousel-vh), var(--carousel-max-h));
+  object-fit:cover;
+}
+
+/* Flechas */
+.arrow{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:40px; height:40px; display:grid; place-items:center;
+  border-radius:999px; background:rgba(17,26,32,.85);
+  border:1px solid rgba(255,255,255,.1); box-shadow:var(--shadow-soft);
+}
+.arrow.left{ left:12px } .arrow.right{ right:12px }
+
+/* =========================== GRID DE PRODUCTOS ======================== */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
+  gap: clamp(14px, 2vw, 24px);
+  margin-top:26px;
+  align-items:start;
+}
+.card.product{
+  position:relative;
+  background:#0d141a; border:1px solid rgba(255,255,255,.06);
+  border-radius:18px; overflow:hidden; box-shadow:var(--shadow-soft);
+  transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  display:flex; flex-direction:column;
+}
+.card.product:hover{ transform:translateY(-3px); box-shadow:var(--shadow); border-color:rgba(111,208,222,.22); }
+.card.product img{
+  display:block; width:100%;
+  aspect-ratio:16/9; height:auto; object-fit:cover; flex:0 0 auto;
+}
+
+/* Botón “Agregar” */
+.add-btn{
+  position:absolute; left:12px; top:12px; z-index:3;
+  display:inline-flex; align-items:center; gap:8px;
+  height:34px; padding:0 12px;
+  font-weight:700; font-size:13px;
+  color:#e8f0f2; background:rgba(32,51,62,.8);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;
+  box-shadow:var(--shadow-soft);
+  backdrop-filter:saturate(140%) blur(6px);
+  cursor:pointer;
+}
+.add-btn svg{ width:16px; height:16px }
+
+/* Cuerpo: nombre + precio */
+.card.product .card-body{
+  background:#0d141a; padding:12px 14px;
+  display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+}
+.card.product .name{
+  margin:0; font-size:15px; font-weight:700; letter-spacing:.2px; color:#eaf6f8; line-height:1.2;
+  max-width:70%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.card.product .price{
+  margin-left:auto; font-weight:800; font-size:15px; color:#cfe9ee;
+  background:#12212a; border:1px solid rgba(255,255,255,.08);
+  padding:6px 10px; border-radius:10px; white-space:nowrap;
+}
+
+/* ============================ PAGINACIÓN ============================== */
+.pagination{
+  margin-top:20px;
+  display:flex; align-items:center; justify-content:center; gap:14px;
+}
+.page-btn{
+  height:40px; padding:0 16px; border-radius:999px;
+  background:#1b2a33; border:1px solid rgba(255,255,255,.08);
+  color:var(--text); font-weight:800; cursor:pointer;
+}
+.page-btn:disabled{ opacity:.45; cursor:not-allowed }
+.page-info{ color:var(--muted); font-weight:700 }
+
+/* =============================== FAB ================================== */
+.fab{
+  position:fixed; right:28px; bottom:28px; width:64px; height:64px; border-radius:999px;
+  background:#1b2a33; border:1px solid rgba(255,255,255,.08); display:grid; place-items:center; box-shadow:var(--shadow);
+  }

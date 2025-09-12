@@ -1,0 +1,34 @@
+/* =============================== HEADER =============================== */
+.nav{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:saturate(150%) blur(6px);
+  background:rgba(15,20,26,.75);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.nav-inner{
+  max-width:var(--maxw); margin:0 auto; padding:14px 20px;
+  display:flex; align-items:center; gap:14px;
+}
+.brand{ display:flex; align-items:center; gap:6px; font-weight:800; letter-spacing:.6px }
+.brand .a{ font-size:28px }
+.brand .b{ font-size:28px; color:var(--brand-2); text-shadow:0 0 16px rgba(111,208,222,.2) }
+
+.search{
+  flex:1; display:flex; align-items:center; gap:10px;
+  padding:10px 16px; border-radius:999px; background:#1b2a33;
+  border:1px solid rgba(255,255,255,.08);
+}
+.search input{
+  flex:1; border:0; outline:0; background:transparent; color:var(--text); font-size:15px;
+}
+.search input:disabled{ opacity:.7; color:var(--muted) }
+
+.icons{ display:flex; align-items:center; gap:14px; margin-left:auto }
+.icon-btn{
+  width:40px; height:40px; display:grid; place-items:center; border-radius:999px;
+  background:#18222a; border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow-soft);
+}
+.login{
+  padding:10px 20px; border-radius:999px; background:#20333e; border:1px solid rgba(255,255,255,.08);
+  font-weight:600;
+}
