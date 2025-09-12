@@ -26,7 +26,9 @@
 .icons{ display:flex; align-items:center; gap:14px; margin-left:auto }
 .icon-btn{
   width:40px; height:40px; display:grid; place-items:center; border-radius:999px;
-  background:#18222a; border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow-soft);
+  background:#18222a; border:1px solid rgba(255,255,255,.08);
+   box-shadow:var(--shadow-soft);
+   color: #ffff;
 }
 .login{
   padding:10px 20px; border-radius:999px; background:#20333e; border:1px solid rgba(255,255,255,.08);
