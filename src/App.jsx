@@ -1,14 +1,15 @@
 import { useState } from "react";
-import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
+import Login from "./pages/Login/Login";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentPage, setCurrentPage] = useState("home");
 
   const handleLogin = (username, password) => {
-    // 👉 Aquí puedes poner validaciones reales, por ahora ejemplo:
     if (username === "admin" && password === "1234") {
       setIsAuthenticated(true);
+      setCurrentPage("home");
     } else {
       alert("Usuario o contraseña incorrectos");
     }
@@ -16,11 +17,8 @@ function App() {
 
   return (
     <>
-      {!isAuthenticated ? (
-        <Login onLogin={handleLogin} />
-      ) : (
-          <Home />
-      )}
+      {currentPage === "home" && <Home onNavigate={setCurrentPage} />}
+      {currentPage === "login" && <Login onLogin={handleLogin} onNavigate={setCurrentPage} />}
     </>
   );
 }

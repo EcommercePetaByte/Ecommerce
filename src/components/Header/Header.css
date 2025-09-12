@@ -32,5 +32,8 @@
 }
 .login{
   padding:10px 20px; border-radius:999px; background:#20333e; border:1px solid rgba(255,255,255,.08);
-  font-weight:600;
+  font-weight:600; cursor: pointer;color: #ffff;
+}
+.login:hover {
+  text-decoration: underline;
 }

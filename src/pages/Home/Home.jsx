@@ -3,7 +3,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import "./Home.css";
 
-export default function Home() {
+export default function Home({ isAuthenticated, onNavigate }) {
   const trackRef = useRef(null);
 
   const scrollBySlide = (dir = 1) => {
@@ -13,7 +13,6 @@ export default function Home() {
     el.scrollBy({ left: dir * slideWidth, behavior: "smooth" });
   };
 
-  // ====== DATA DE EJEMPLO ======
   const BASE = [
     { name: "Mouse gamer", price: 24999, img: "https://redragon.es/content/uploads/2021/04/griffin-black-2.jpg" },
     { name: "Barra de sonido", price: 89999, img: "https://redragon.es/content/uploads/2022/04/5-ESTILO-Y-ROBUSTEZ.jpg" },
@@ -42,7 +41,6 @@ export default function Home() {
     return arr;
   }, []);
 
-  // ====== PAGINACIÓN ======
   const PAGE_SIZE = 20;
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(products.length / PAGE_SIZE);
@@ -60,9 +58,19 @@ export default function Home() {
   const toARS = (n) =>
     n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
+  // ✅ Maneja click en agregar producto
+  const handleAdd = () => {
+    if (!isAuthenticated) {
+      alert("Debes iniciar sesión para agregar productos.");
+      onNavigate("login"); // manda a login si no está autenticado
+    } else {
+      alert("Producto agregado al carrito!"); // reemplaza con tu lógica real
+    }
+  };
+
   return (
     <>
-      <Header />
+      <Header onNavigate={onNavigate} />
 
       <main className="container">
         {/* ------------------------ Carrusel ------------------------ */}
@@ -92,7 +100,7 @@ export default function Home() {
         <section className="grid" aria-label="Productos">
           {current.map((p) => (
             <article className="card product" key={p.id}>
-              <button className="add-btn" type="button" aria-label={`Agregar ${p.name}`}>
+              <button className="add-btn" type="button" aria-label={`Agregar ${p.name}`} onClick={handleAdd}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
@@ -128,7 +136,6 @@ export default function Home() {
         </svg>
       </button>
 
-              {/* ------------------------ Footer ------------------------- */}
       <Footer />
     </>
   );
