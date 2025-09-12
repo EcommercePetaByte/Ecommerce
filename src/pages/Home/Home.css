@@ -135,5 +135,5 @@ figure{ margin:0 }
   position:fixed; right:28px; bottom:28px; width:64px; height:64px; border-radius:999px;
   background:#1b2a33; border:1px solid rgba(255,255,255,.08);
    display:grid; place-items:center; box-shadow:var(--shadow);
-   color: #ffffff;
+   color: #ffffff;cursor: pointer;
   }

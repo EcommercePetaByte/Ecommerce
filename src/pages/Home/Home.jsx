@@ -1,10 +1,14 @@
 import { useMemo, useRef, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import Chatbot from "../../components/Chatbot/Chatbot";
 import "./Home.css";
 
 export default function Home({ isAuthenticated, onNavigate }) {
   const trackRef = useRef(null);
+
+  // ✅ Estado para mostrar/ocultar el chatbot
+  const [chatOpen, setChatOpen] = useState(false);
 
   const scrollBySlide = (dir = 1) => {
     const el = trackRef.current;
@@ -13,6 +17,7 @@ export default function Home({ isAuthenticated, onNavigate }) {
     el.scrollBy({ left: dir * slideWidth, behavior: "smooth" });
   };
 
+  // ====== DATA DE EJEMPLO ======
   const BASE = [
     { name: "Mouse gamer", price: 24999, img: "https://redragon.es/content/uploads/2021/04/griffin-black-2.jpg" },
     { name: "Barra de sonido", price: 89999, img: "https://redragon.es/content/uploads/2022/04/5-ESTILO-Y-ROBUSTEZ.jpg" },
@@ -58,13 +63,13 @@ export default function Home({ isAuthenticated, onNavigate }) {
   const toARS = (n) =>
     n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
-  // ✅ Maneja click en agregar producto
+  // Función para agregar producto
   const handleAdd = () => {
     if (!isAuthenticated) {
       alert("Debes iniciar sesión para agregar productos.");
-      onNavigate("login"); // manda a login si no está autenticado
+      onNavigate("login");
     } else {
-      alert("Producto agregado al carrito!"); // reemplaza con tu lógica real
+      alert("Producto agregado al carrito!");
     }
   };
 
@@ -130,11 +135,18 @@ export default function Home({ isAuthenticated, onNavigate }) {
         </nav>
       </main>
 
-      <button className="fab" title="Ayuda" aria-label="Abrir chat" disabled>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-        </svg>
-      </button>
+      <button
+  className="fab"
+  title="Ayuda"
+  aria-label="Abrir chat"
+  onClick={() => setChatOpen(!chatOpen)}
+>
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+    <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+  </svg>
+</button>
+
+{chatOpen && <Chatbot />}
 
       <Footer />
     </>
