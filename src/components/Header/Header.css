@@ -9,9 +9,6 @@
   max-width:var(--maxw); margin:0 auto; padding:14px 20px;
   display:flex; align-items:center; gap:14px;
 }
-.brand{ display:flex; align-items:center; gap:6px; font-weight:800; letter-spacing:.6px }
-.brand .a{ font-size:28px }
-.brand .b{ font-size:28px; color:var(--brand-2); text-shadow:0 0 16px rgba(111,208,222,.2) }
 
 .search{
   flex:1; display:flex; align-items:center; gap:10px;

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import AuthLayout from "../../layouts/AuthLayout/AuthLayout";
+import Logo from "../../components/Logo/Logo";
+
 import "./Login.css";
 
 const Login = ({ onLogin, onRegister }) => {
@@ -18,7 +20,13 @@ const Login = ({ onLogin, onRegister }) => {
   };
 
   return (
+
     <AuthLayout>
+
+      <div className="login-header">
+        <Logo />
+      </div>
+
       <h2 className="login-title">
         {isRegister ? "Crear Cuenta" : "Iniciar Sesión"}
       </h2>
