@@ -1,14 +1,14 @@
 import { useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom"; // 👈 importamos useNavigate
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import "./Home.css";
 
-export default function Home({ isAuthenticated, onNavigate }) {
+export default function Home({ isAuthenticated }) {
   const trackRef = useRef(null);
-
-  // ✅ Estado para mostrar/ocultar el chatbot
   const [chatOpen, setChatOpen] = useState(false);
+  const navigate = useNavigate(); // 👈 hook de navegación
 
   const scrollBySlide = (dir = 1) => {
     const el = trackRef.current;
@@ -31,25 +31,21 @@ export default function Home({ isAuthenticated, onNavigate }) {
     { name: "Mousepad XL", price: 12999, img: "https://tecnogame.ec/wp-content/uploads/2022/01/Glowing-Cool.jpg" },
   ];
 
-  const products = useMemo(() => {
-    const arr = [];
-    const total = 60; 
-    for (let i = 0; i < total; i++) {
+   const products = useMemo(() => {
+    return Array.from({ length: 60 }, (_, i) => {
       const b = BASE[i % BASE.length];
-      arr.push({
+      return {
         id: i + 1,
         name: `${b.name} ${i + 1}`,
-        price: b.price + (i % 5) * 1000, 
+        price: b.price + (i % 5) * 1000,
         img: b.img,
-      });
-    }
-    return arr;
+      };
+    });
   }, []);
 
   const PAGE_SIZE = 20;
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(products.length / PAGE_SIZE);
-
   const start = (page - 1) * PAGE_SIZE;
   const current = products.slice(start, start + PAGE_SIZE);
 
@@ -63,20 +59,20 @@ export default function Home({ isAuthenticated, onNavigate }) {
   const toARS = (n) =>
     n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
-  // Función para agregar producto
+  // ✅ ahora usamos navigate en vez de onNavigate
   const handleAdd = () => {
     if (!isAuthenticated) {
-      alert("Debes iniciar sesión para agregar productos.");
-      onNavigate("login");
+      navigate("/login"); // 👈 si no estás logueado, vamos a login
     } else {
       alert("Producto agregado al carrito!");
     }
   };
 
+
   return (
     <>
-      <Header onNavigate={onNavigate} />
-
+      <Header />
+      
       <main className="container">
         {/* ------------------------ Carrusel ------------------------ */}
         <section className="carousel-wrap" aria-label="Destacados">
@@ -100,21 +96,32 @@ export default function Home({ isAuthenticated, onNavigate }) {
           </button>
         </section>
 
-        {/* ------------------------ Productos ------------------------- */}
+    {/* ------------------------ Productos ------------------------- */}
         <h2 className="section-title">Quizás te interese...</h2>
         <section className="grid" aria-label="Productos">
           {current.map((p) => (
             <article className="card product" key={p.id}>
-              <button className="add-btn" type="button" aria-label={`Agregar ${p.name}`} onClick={handleAdd}>
+              <button
+                className="add-btn"
+                type="button"
+                aria-label={`Agregar ${p.name}`}
+                onClick={handleAdd}
+              >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
                 <span>Agregar</span>
               </button>
 
-              <img src={p.img} alt={p.name} loading="lazy" />
+              {/* 👇 envolvemos imagen y nombre con Link */}
+              <Link to={`/producto/${p.id}`}>
+                <img src={p.img} alt={p.name} loading="lazy" />
+              </Link>
+
               <div className="card-body">
-                <h3 className="name">{p.name}</h3>
+                <h3 className="name">
+                  <Link to={`/producto/${p.id}`}>{p.name}</Link>
+                </h3>
                 <div className="price">{toARS(p.price)}</div>
               </div>
             </article>

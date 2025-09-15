@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout/AuthLayout";
 import Logo from "../../components/Logo/Logo";
 
@@ -7,22 +8,30 @@ import "./Login.css";
 const Login = ({ onLogin, onRegister }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState(""); // 👈 nuevo estado para email
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (isRegister) {
-      onRegister(username, email, password); // 👉 registro con email
+      // Registro
+      onRegister(username, email, password); 
+      navigate("/"); // redirige al home tras registrarse
     } else {
-      onLogin(username, password);
+      // Login
+      const success = onLogin(username, password); // 👈 debe devolver true/false
+      if (success) {
+        navigate("/"); // solo redirige si login correcto
+      } else {
+        alert("Usuario o contraseña incorrectos"); // alerta si falla
+      }
     }
   };
 
   return (
-
     <AuthLayout>
-
       <div className="login-header">
         <Logo />
       </div>
@@ -32,7 +41,6 @@ const Login = ({ onLogin, onRegister }) => {
       </h2>
 
       <form className="login-form" onSubmit={handleSubmit}>
-        {/* Usuario */}
         <div className="form-group">
           <label htmlFor="username">Usuario</label>
           <input
@@ -44,7 +52,6 @@ const Login = ({ onLogin, onRegister }) => {
           />
         </div>
 
-        {/* 👇 Campo extra solo cuando está en modo registro */}
         {isRegister && (
           <div className="form-group">
             <label htmlFor="email">Correo electrónico</label>
@@ -58,7 +65,6 @@ const Login = ({ onLogin, onRegister }) => {
           </div>
         )}
 
-        {/* Contraseña */}
         <div className="form-group">
           <label htmlFor="password">Contraseña</label>
           <input
