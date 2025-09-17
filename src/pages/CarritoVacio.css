@@ -1,0 +1,23 @@
+.empty-cart-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    color: #55b7ff;
+    background-color: #0d141a;
+    text-align: center;
+}
+
+.cart-icon{
+    font-size: 15rem;
+    margin-bottom: 2rem;
+    margin-right: 3rem;
+    stroke: #55b7ff;
+}
+
+.empty-cart-text{
+    font-size: 2rem;
+    font-weight: bold;
+}
