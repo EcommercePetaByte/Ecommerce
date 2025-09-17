@@ -1,0 +1,109 @@
+.pago-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #0a1a24;
+  border-radius: 12px;
+  color: #fff;
+  text-align: center;
+}
+
+.pago-metodos {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.pago-metodos button {
+  background: #1da1f2;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #fff;
+  transition: background 0.2s;
+}
+
+.pago-metodos button.active {
+  background: #0d8bdc;
+}
+
+.pago-form label {
+  display: block;
+  margin: 1rem 0;
+  text-align: left;
+}
+
+.pago-form input {
+  width: 100%;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 8px;
+  margin-top: 0.3rem;
+  font-size: 1rem;
+}
+
+.pago-acciones {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.pago-acciones button{
+  flex: 1 1 0;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+.btn-cancelar {
+  all: unset;            /* resetea TODO lo heredado */
+  display: inline-block; /* volvemos a declararlo como bloque en línea */
+  width: 100%;           /* que ocupe lo mismo que el de pagar */
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #ff4d4f;
+  color: white;
+ 
+}
+
+.btn-cancelar:hover{
+    background-color: #d9363e;
+}
+
+.pagar-btn {
+  background: #28a745;
+ cursor: pointer;
+}
+
+.pagar-btn:hover{
+    background-color: #199436;
+}
+
+
+
+.pago-qr img {
+  max-width: 200px;
+  margin: 1rem auto;
+  display: block;
+}
+
+.volver-btn {
+  background: #1da1f2;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  margin-top: 1rem;
+}

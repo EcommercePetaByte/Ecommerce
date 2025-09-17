@@ -1,0 +1,154 @@
+.carrito {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.carrito-container h1 {
+    margin-left: 1rem; /* mover el título un poco a la derecha */
+}
+
+.carrito-tabla {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Productos */
+.carrito-tabla th,
+.carrito-tabla td {
+    border-bottom: 1px solid #ddd;
+    padding: 0.8rem;
+    text-align: center;
+}
+
+.carrito-tabla th {
+    font-weight: bold;
+}
+
+.producto-imagen {
+    max-width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.btn-eliminar {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-eliminar:hover {
+    background: #cc0000;
+}
+
+/* Botones de cantidad */
+.cantidad-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.7rem;
+    margin: 0 0.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+    height: 35px;
+}
+
+.cantidad-btn:hover {
+    background-color: #0056b3;
+}
+
+.cantidad-text {
+    margin: 0 0.3rem;
+    font-weight: bold;
+}
+
+/* Botón Seguir Comprando */
+.seguir-btn {
+    background-color: #6c757d; /* gris */
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    height: 45px;
+}
+
+.seguir-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Botones generales */
+.vaciar-btn,
+.comprar-btn,
+.seguir-btn {
+    height: 45px; /* todos los botones del footer mismo alto */
+    padding: 0 1.5rem;
+}
+
+/* Carrito Footer */
+.carrito-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 2px solid #ddd;
+    margin-left: 1rem; /* mover un poco hacia la derecha */
+    margin-right: 1rem;
+}
+
+.carrito-footer h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white; /* total en blanco */
+}
+
+.acciones-footer {
+    display: flex;
+    gap: 1rem;
+}
+
+.vaciar-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.vaciar-btn:hover {
+    background-color: #cc0000;
+}
+
+.comprar-btn {
+    margin-top: 0px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.comprar-btn:hover {
+    background-color: #1e7e34;
+}
+
+/* Carrito Vacio */
+.carrito-vacio {
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-top: 50px;
+}

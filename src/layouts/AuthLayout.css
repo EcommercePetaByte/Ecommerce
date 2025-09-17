@@ -1,0 +1,32 @@
+/* ========================== AUTH LAYOUT ========================== */
+
+.auth-layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #0F2027;
+  padding: 24px;
+  color: #0F2027;
+}
+
+.auth-box {
+  background: #4FC3F7;
+  padding: 40px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #0F2027;
+}
+
+/* Título opcional dentro del layout 
+.auth-box h1 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  color: var(--text);
+}
+*/
