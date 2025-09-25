@@ -1,0 +1,153 @@
+.perfil-container {
+   display: flex;
+   flex-direction: column;
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 20px;
+   font-family: 'Arial', sans-serif;
+}
+
+.perfil-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #2d6f7e;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.perfil-header h2{
+    font-size: 2rem;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.perfil-tab p{
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+
+
+.perfil-content {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.perfil-sidebar{
+    flex: 1;
+    min-width: 220px;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.perfil-avatar{
+  width: 150px;
+  height: 150px;
+  background-color: #1b2a33;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid #3498db;
+  margin-bottom: 30px;
+}
+
+.avatar-icon{
+    color: #3498db;
+}
+
+.sidebar-btn {
+    width: 100%;
+    background-color: #3498db;
+    color: white;
+    border: 1px rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 15px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-btn:hover{
+    background-color: #0056b3;
+}
+
+.logout-btn {
+    background-color: #dc3545;
+}
+.logout-btn:hover{
+    background-color: #db1025;
+}
+
+.perfil-info-section{
+    flex: 2;
+    min-width: 300px;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.info-item{
+    margin-bottom: 25px;
+}
+
+.info-item label{
+    display: block;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #95a5a6;
+}
+
+.info-field{
+    display: flex;
+    align-items: center;
+    background-color: #1b2a33;
+    border-radius: 999px;
+    padding: 15px 20px;
+}
+
+.info-field input{
+    flex: 1;
+    background-color: transparent;
+    outline: none;
+    border: none;
+    font-size: 1rem;
+    color: #fff;
+}
+
+.edit-icon{
+    cursor: pointer;
+    color: #3498db;
+    transition: color 0.2s;
+    margin-left: 10px;
+}
+
+.edit-icon:hover{
+    color: #0056b3;
+}
+
+@media (max-width: 900px){
+    .perfil-content{
+        flex-direction: column;
+    }
+}
+
+.perfil-sidebar, .perfil-info-section{
+    width: 100%;
+}

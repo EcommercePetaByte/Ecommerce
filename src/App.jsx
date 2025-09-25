@@ -10,6 +10,8 @@ import DetalleProducto from "./pages/DetalleProducto/DetalleProducto";
 import Categoria from "./pages/Categoria/Categoria"; // 👈 importamos Categoria
 import Carrito from "./pages/Carrito/Carrito";
 import Pago from "./pages/Pago/Pago";
+import Perfil from "./pages/Perfil/Perfil"
+
 
 
 function App() {
@@ -82,6 +84,10 @@ const handleRegister = (username, email, password) => {
         <Route 
         path="/Pago"
         element={<Pago />}
+        />
+        <Route 
+        path="/Perfil"
+        element={<Perfil />}
         />
       </Routes>
     </Router>
