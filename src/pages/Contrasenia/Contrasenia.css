@@ -1,0 +1,74 @@
+.recuperar-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 20px;
+}
+
+.formulario {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  padding: 32px;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formulario h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  text-align: center;
+}
+
+.formulario p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.formulario input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: border-color .2s ease, background .2s ease;
+}
+
+.formulario input:focus {
+  border-color: var(--brand-2);
+  background: #132028;
+}
+
+.formulario button {
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff;
+  box-shadow: var(--shadow-soft);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.formulario button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.formulario button:active {
+  transform: scale(.97);
+}

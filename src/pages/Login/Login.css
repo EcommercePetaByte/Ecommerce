@@ -12,7 +12,6 @@
 }
 
 .login-title {
-  color: #0F2027;
   text-align: center;
   margin-bottom: 24px;
   font-size: 22px;
@@ -24,7 +23,7 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px; /* espacio entre grupos */
 }
 
 .form-group {
@@ -57,10 +56,10 @@
 
 /* Botón login */
 .btn-login {
-  margin-top: 15px;
+  margin-top: 8px;
   padding: 15px;
   background: #0F2027;
-  color: #ffff;
+  color: #fff;
   border: none;
   border-radius: 999px;
   font-size: 15px;
@@ -80,7 +79,6 @@
   margin-top: 16px;
   font-size: 14px;
   color: #0F2027;
-  
 }
 
 .btn-register {
@@ -90,7 +88,6 @@
   cursor: pointer;
   font-weight: 700;
   margin-left: 4px;
-  
 }
 
 .btn-register:hover {
@@ -107,3 +104,37 @@ input:-webkit-autofill {
   top: 20px;
   left: 20px;
 }
+
+/* ==================== Recuperar contraseña ==================== */
+.forgot-text {
+  margin-top: 1px;  /* bien pegado al input contraseña */
+  margin-bottom: 0;
+  text-align: left;
+  margin-left: 12px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.btn-forgot {
+  background: none;
+  border: none;
+  color: #0F2027;
+  font-size: 13px;
+  font-weight: 700; /* más gruesita */
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-forgot:hover {
+  text-decoration: underline; /* solo subrayado */
+  color: #0F2027; /* mismo color */
+}
+
+/* ==================== btn google ==================== */
+
+.google-login-wrapper {
+  display: flex;
+  justify-content: center; /* centra horizontalmente */
+  margin-top: 12px;       /* espacio opcional sobre el botón */
+}
+

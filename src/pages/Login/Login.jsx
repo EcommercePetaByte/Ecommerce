@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout.jsx";
 import Logo from "../../components/Logo/Logo";
+import BotonGoogle from "../../components/BotonGoogle/BotonGoogle.jsx";
 
 import "./Login.css";
 
@@ -18,16 +19,22 @@ const Login = ({ onLogin, onRegister }) => {
     if (isRegister) {
       // Registro
       onRegister(username, email, password); 
-      navigate("/"); // redirige al home tras registrarse
+      navigate("/"); 
     } else {
-      // Login
-      const success = onLogin(username, password); // 👈 debe devolver true/false
+      // Login con email y contraseña
+      const success = onLogin(email, password); 
       if (success) {
-        navigate("/"); // solo redirige si login correcto
+        navigate("/"); 
       } else {
-        alert("Usuario o contraseña incorrectos"); // alerta si falla
+        alert("Correo o contraseña incorrectos");
       }
     }
+  };
+
+  // Función para iniciar sesión / registrarse con Google
+  const handleGoogleLogin = () => {
+    // Aquí podrías integrar Firebase o Google OAuth
+    alert("Función de inicio con Google aún no implementada");
   };
 
   return (
@@ -41,29 +48,29 @@ const Login = ({ onLogin, onRegister }) => {
       </h2>
 
       <form className="login-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="username">Usuario</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Ingrese su usuario"
-          />
-        </div>
-
         {isRegister && (
           <div className="form-group">
-            <label htmlFor="email">Correo electrónico</label>
+            <label htmlFor="username">Usuario</label>
             <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Ingrese su correo"
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Ingrese su usuario"
             />
           </div>
         )}
+
+        <div className="form-group">
+          <label htmlFor="email">Correo electrónico</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Ingrese su correo"
+          />
+        </div>
 
         <div className="form-group">
           <label htmlFor="password">Contraseña</label>
@@ -75,6 +82,18 @@ const Login = ({ onLogin, onRegister }) => {
             placeholder="Ingrese su contraseña"
           />
         </div>
+
+        {!isRegister && (
+          <p className="forgot-text">
+            <button
+              type="button"
+              className="btn-forgot"
+              onClick={() => navigate("/recuperar")}
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </p>
+        )}
 
         <button type="submit" className="btn-login">
           {isRegister ? "Registrarse" : "Ingresar"}
@@ -91,6 +110,13 @@ const Login = ({ onLogin, onRegister }) => {
           {isRegister ? "Inicia sesión aquí" : "Crea una aquí"}
         </button>
       </p>
+
+      <div className="google-login-wrapper">
+        <BotonGoogle
+          onClick={handleGoogleLogin}
+          texto={isRegister ? "Registrarse con Google" : "Iniciar sesión con Google"}
+        />
+      </div>
     </AuthLayout>
   );
 };

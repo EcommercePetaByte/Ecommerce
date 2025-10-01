@@ -7,10 +7,11 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import DetalleProducto from "./pages/DetalleProducto/DetalleProducto";
-import Categoria from "./pages/Categoria/Categoria"; // 👈 importamos Categoria
+import Categoria from "./pages/Categoria/Categoria"; // importamos Categoria
 import Carrito from "./pages/Carrito/Carrito";
 import Pago from "./pages/Pago/Pago";
 import Perfil from "./pages/Perfil/Perfil"
+import Contrasenia from "./pages/Contrasenia/Contrasenia.jsx";
 
 
 
@@ -39,12 +40,12 @@ function App() {
         name: `${b.name} ${i + 1}`,
         price: b.price + (i % 5) * 1000,
         img: b.img,
-        categoria: b.categoria, // 👈 importante: agregamos la categoría
+        categoria: b.categoria, //  importante: agregamos la categoría
       };
     });
   }, []);
 
-   // ✅ Login devuelve true si es correcto, false si falla
+   //  Login devuelve true si es correcto, false si falla
   const handleLogin = (username, password) => {
     if (username === "admin" && password === "1234") {
       setIsAuthenticated(true);
@@ -69,6 +70,9 @@ const handleRegister = (username, email, password) => {
           path="/login" 
           element={<Login onLogin={handleLogin} onRegister={handleRegister} />} 
         />
+
+        <Route path="/recuperar" element={<Contrasenia />} />
+
         <Route 
           path="/producto/:id" 
           element={<DetalleProducto productos={products} />} 

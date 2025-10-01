@@ -1,0 +1,27 @@
+.boton-google {
+  max-width: 250px;         /* más estrecho */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;                 /* espacio más reducido entre icono y texto */
+  padding: 0.3rem 1rem;     /* menos alto y ancho */
+  font-size: 0.75rem;       /* más pequeño */
+  line-height: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  background-color: #fff;
+  color: rgb(65, 63, 63);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.boton-google svg {
+  height: 18px;             /* más pequeño */
+  width: 18px;
+}
+
+.boton-google:hover {
+  transform: scale(1.02);
+}
