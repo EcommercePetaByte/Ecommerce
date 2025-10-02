@@ -1,6 +1,6 @@
 import React from "react";
 import{FaShoppingCart} from 'react-icons/fa'
-import './CarritoVacio.css'
+import './Carrito_Vacio.css'
 
 const EmptyCart = () =>{
     return(

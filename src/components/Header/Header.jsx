@@ -2,14 +2,15 @@ import "./Header.css";
 import Logo from "../Logo/Logo";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { agregarAlCarrito } from "../../carrito";
 
 const Header = () => {
   const navigate = useNavigate();
   const [openCategorias, setOpenCategorias] = useState(false);
-  const [searchText, setSearchText] = useState(""); // 🔹 Estado de la búsqueda
+  const [searchText, setSearchText] = useState("");
+  
+  // 🔹 Estado que simula si el usuario está logueado
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // 🔹 Lista de categorías (podés cargar desde productos o backend más adelante)
   const categorias = [
     "Periféricos",
     "Componentes",
@@ -20,12 +21,11 @@ const Header = () => {
     "Sillas"
   ];
 
-  // 🔹 Función para enviar búsqueda
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchText.trim() === "") return;
     navigate(`/categoria/${searchText}`);
-    setSearchText(""); // opcional: limpiar input
+    setSearchText("");
   };
 
   return (
@@ -44,21 +44,12 @@ const Header = () => {
             placeholder="Buscar…"
             aria-label="Buscar"
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)} // 🔹 Actualiza el estado
+            onChange={(e) => setSearchText(e.target.value)}
           />
         </form>
 
         <div className="icons">
-        {/* Perfil  */}
-        <Link to="/perfil" className="icon-btn" title="Perfil" aria-label="Perfil">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path 
-            stroke-linecap="round" 
-            stroke-linejoin="round" 
-            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" 
-            />
-          </svg>
-        </Link>
+
           {/* 🔹 Carrito */}
           <Link to="/carrito" className="icon-btn" title="Carrito" aria-label="Carrito">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -105,10 +96,22 @@ const Header = () => {
             )}
           </div>
 
-          {/* 🔹 Login */}
-          <button className="login" onClick={() => navigate("/login")}>
-            Login
-          </button>
+          {/* 🔹 Condicional: Login o Perfil */}
+          {isLoggedIn ? (
+            <Link to="/perfil" className="icon-btn" title="Perfil" aria-label="Perfil">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"  fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" 
+                />
+              </svg>
+            </Link>
+          ) : (
+            <button className="login" onClick={() => navigate("/login")}>
+              Login
+            </button>
+          )}
         </div>
       </div>
     </header>

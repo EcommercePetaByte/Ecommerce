@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import Chatbot from "../../components/ChatBot/ChatBot";
 import "./DetalleProducto.css";
 
 export default function DetalleProducto({ productos }) {
@@ -10,6 +11,7 @@ export default function DetalleProducto({ productos }) {
   const navigate = useNavigate();
   const [cantidad, setCantidad] = useState(1);
   const [envio, setEnvio] = useState("estandar"); // estandar o exprés
+  const [chatOpen, setChatOpen] = useState(false); // Parte del chatbot
 
   const producto = productos.find((p) => p.id === parseInt(id));
 
@@ -119,7 +121,20 @@ export default function DetalleProducto({ productos }) {
             <button className="comprar-btn">Agregar al carrito</button>
           </div>
         </div>
+
+        {/* ------------------------ ChatBot ------------------------- */}
+              <button className="fab" title="Ayuda" onClick={() => setChatOpen(!chatOpen)}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                </svg>
+              </button>
+        
+              {chatOpen && <Chatbot />}
+
       </main>
+
+
+      
       <Footer />
     </>
   );

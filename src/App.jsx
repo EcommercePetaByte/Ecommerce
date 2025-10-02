@@ -46,8 +46,8 @@ function App() {
   }, []);
 
    //  Login devuelve true si es correcto, false si falla
-  const handleLogin = (username, password) => {
-    if (username === "admin" && password === "1234") {
+  const handleLogin = (email, password) => {
+    if (email === "admin@gmail.com" && password === "1234") {
       setIsAuthenticated(true);
       return true;
     } else {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/Header.jsx";
+import Chatbot from "../../components/ChatBot/ChatBot.jsx";
 import {
   getCarrito,
   vaciarCarrito,
@@ -14,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 export default function Carrito() {
   const [productos, setProductos] = useState([]);
   const navigate = useNavigate();
+  const [chatOpen, setChatOpen] = useState(false); // Parte del chatbot
+
 
   useEffect(() => {
     setProductos(getCarrito());
@@ -102,6 +105,16 @@ export default function Carrito() {
             <button onClick={() => navigate("/")} className="seguir-btn">Seguir Comprando</button>
           </div>
         </div>
+
+             {/* ------------------------ ChatBot ------------------------- */}
+                    <button className="fab" title="Ayuda" onClick={() => setChatOpen(!chatOpen)}>
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                        <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+            
+                    {chatOpen && <Chatbot />}
+
       </main>
     </div>
   );
