@@ -10,6 +10,7 @@ import Categoria from "./pages/Categoria/Categoria";
 import Carrito from "./pages/Carrito/Carrito";
 import Pago from "./pages/Pago/Pago";
 import Perfil from "./pages/Perfil/Perfil";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 import "./theme.css";
 
@@ -19,6 +20,7 @@ import Dashboard from "./pages/Administrador/Dashboard";
 import Productos from "./pages/Administrador/Productos";
 import Pedidos from "./pages/Administrador/Pedidos";
 import Ajustes from "./pages/Administrador/Ajustes";
+import LogAdmin from "./pages/Administrador/LogAdmin";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -88,13 +90,25 @@ function App() {
         <Route path="/pago" element={<Pago />} />
         <Route path="/perfil" element={<Perfil />} />
 
-        {/* Rutas admin */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          path="/login-admin"
+          element={<LogAdmin onLogin={() => setIsAuthenticated(true)} />}
+        />
+          
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="productos" element={<Productos />} />
           <Route path="pedidos" element={<Pedidos />} />
           <Route path="ajustes" element={<Ajustes />} />
         </Route>
+
       </Routes>
     </Router>
   );
