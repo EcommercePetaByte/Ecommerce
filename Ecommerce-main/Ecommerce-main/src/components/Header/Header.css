@@ -1,0 +1,90 @@
+/* Botón de categorías */
+.categorias-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+}
+
+.categorias-btn:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+/* Dropdown de categorías */
+.categorias-wrapper {
+  position: relative;
+}
+
+.categorias-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  min-width: 200px;
+  padding: 8px 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--elev-soft);
+  list-style: none;
+  margin: 0;
+  z-index: 99;
+}
+
+.categorias-dropdown li {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.categorias-dropdown li:hover {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* Botón especial para el foco (tema) */
+.foco-btn {
+  background: #fff;             /* fondo blanco cuando está apagado */
+  color: #000;                  /* ícono oscuro */
+  border: 1px solid var(--border);
+  transition: background .2s, color .2s;
+}
+
+.foco-btn.on {
+  background: #ffd166;          /* fondo amarillo al encender */
+  color: #fff;                  /* icono blanco para contraste */
+  border-color: #e0a800;
+}
+
+/* Unificamos hover para Categorías y Login */
+.categorias-btn:hover,
+.login-btn:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff; /* siempre legible sobre brand */
+}
+
+/* Si tenías reglas previas con !important, aseguramos prioridad */
+.icons .login-btn:hover {
+  background: var(--brand) !important;
+  border-color: var(--brand) !important;
+  color: #fff !important;
+}
+
+/* Accesibilidad: mismo estilo al enfocar con teclado */
+.categorias-btn:focus-visible,
+.login-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 30%, transparent);
+  border-color: var(--brand);
+}
+

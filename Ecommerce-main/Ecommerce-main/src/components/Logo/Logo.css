@@ -1,0 +1,12 @@
+.brand{ display:flex; align-items:center; gap:6px; font-weight:800; letter-spacing:.6px }
+.brand .a {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--logo-a);   /* usa variable */
+}
+
+.brand .b {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--logo-b);   /* usa variable */
+}

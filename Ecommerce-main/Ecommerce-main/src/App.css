@@ -1,0 +1,285 @@
+/* =========================
+   THEME TOKENS (dark / light)
+   ========================= */
+
+/* Oscuro (default) */
+:root{
+  --bg:#0e1114; 
+  --surface:#12181f; 
+  --surface-2:#0f1a22;
+
+  --logo-a: #fff;            /* PETA en blanco */
+  --logo-b: var(--brand-2);  /* BYTE en celeste */
+  
+  --text:#e8f0f2; 
+  --muted:#9fb3bd;
+
+  --brand:#2d6f7e; 
+  --brand-2:#6fd0de; 
+  --ok:#a3ffd1;
+
+  --border: rgba(255,255,255,.08);
+  --border-strong: rgba(255,255,255,.12);
+  --chip-bg:#12212a;
+
+  --elev: 0 10px 30px rgba(0,0,0,.35);
+  --elev-soft: 0 6px 18px rgba(0,0,0,.25);
+
+  --maxw: clamp(1200px, 96vw, 1600px);
+  --card-min: 260px;
+
+  /* Carrusel */
+  --carousel-min-h: 220px; 
+  --carousel-vh: 30vh; 
+  --carousel-max-h: 360px;
+}
+
+/* Claro */
+:root[data-theme="light"]{
+  --bg:#f7fafc; 
+  --surface:#ffffff; 
+  --surface-2:#f2f6f9;
+
+  --text:#20313b; 
+  --muted:#6e8190;
+
+  --brand:#2d6f7e; 
+  --brand-2:#2d6f7e; 
+  --ok:#1f9d55;
+
+  --logo-a: #20313b;         /* PETA en gris oscuro */
+  --logo-b: var(--brand);    /* BYTE en azul/verde */
+
+  --border: rgba(0,0,0,.10);
+  --border-strong: rgba(0,0,0,.14);
+  --chip-bg:#e9f0f4;
+
+  --elev: 0 10px 30px rgba(0,0,0,.10);
+  --elev-soft: 0 6px 18px rgba(0,0,0,.08);
+}
+
+/* Transición suave al cambiar tema */
+* { transition: color .18s ease, background-color .18s ease, border-color .18s ease; }
+img, svg { transition: filter .18s ease, opacity .18s ease; }
+
+/* =========================
+   BASE
+   ========================= */
+*{ box-sizing:border-box }
+html, body, #root{ height:100% }
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+  line-height:1.4;
+}
+a{ color:inherit; text-decoration:none }
+figure{ margin:0 }
+.section-title{ 
+  margin:28px 0 12px; 
+  font-size:clamp(20px,2.4vw,26px);
+  font-weight:800; letter-spacing:.3px; 
+  color: var(--text); 
+}
+
+/* =========================
+   HEADER
+   ========================= */
+.nav{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:saturate(150%) blur(6px);
+  background: color-mix(in oklab, var(--surface) 85%, transparent);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{
+  max-width:var(--maxw); margin:0 auto; padding:14px 20px;
+  display:flex; align-items:center; gap:14px;
+}
+.brand{ display:flex; align-items:center; gap:6px; font-weight:800; letter-spacing:.6px }
+.brand .a{ font-size:28px }
+.brand .b{ font-size:28px; color:var(--brand-2); }
+
+.search{
+  flex:1; display:flex; align-items:center; gap:10px;
+  padding:10px 16px; border-radius:999px; 
+  background: var(--surface-2); border:1px solid var(--border); 
+  box-shadow: var(--elev-soft);
+}
+.search input{
+  flex:1; border:0; outline:0; background:transparent; color:var(--text); font-size:15px;
+}
+.search input:disabled{ opacity:.7; color:var(--muted) }
+
+.icons{ display:flex; align-items:center; gap:14px; margin-left:auto }
+.icon-btn{
+  width:40px; height:40px; display:grid; place-items:center; border-radius:999px;
+  background: var(--surface-2); border:1px solid var(--border); box-shadow: var(--elev-soft);
+  cursor:pointer;
+}
+.icon-btn:hover{ border-color: var(--brand); }
+
+/* =========================
+   LAYOUT
+   ========================= */
+.container{
+  width:min(96vw, var(--maxw));
+  margin:24px auto 80px;
+  padding:0 12px;
+}
+
+/* =========================
+   CARRUSEL
+   ========================= */
+.carousel-wrap{
+  position:relative;
+  width:100%;
+  border-radius:18px;
+  overflow:hidden;
+}
+.carousel{
+  display:flex; gap:0;
+  overflow-x:auto; overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  -ms-overflow-style:none; scrollbar-width:none;
+  touch-action:pan-x;
+}
+.carousel::-webkit-scrollbar{ display:none }
+.slide{ flex:0 0 100%; scroll-snap-align:start; }
+.slide img{
+  display:block; width:100%;
+  height:clamp(var(--carousel-min-h), var(--carousel-vh), var(--carousel-max-h));
+  object-fit:cover;
+}
+
+/* Flechas */
+.arrow{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:40px; height:40px; display:grid; place-items:center;
+  border-radius:999px; 
+  background: color-mix(in oklab, var(--surface) 90%, transparent);
+  border:1px solid var(--border); box-shadow: var(--elev-soft);
+}
+.arrow.left{ left:12px } 
+.arrow.right{ right:12px }
+
+/* =========================
+   GRID PRODUCTOS
+   ========================= */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
+  gap: clamp(14px, 2vw, 24px);
+  margin-top:26px;
+  align-items:start;
+}
+.card.product{
+  position:relative;
+  background: var(--surface); border:1px solid var(--border);
+  border-radius:18px; overflow:hidden; box-shadow: var(--elev);
+  transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease, background-color .16s ease;
+  display:flex; flex-direction:column;
+}
+.card.product:hover{ transform:translateY(-3px); border-color: var(--border-strong); }
+.card.product img{
+  display:block; width:100%;
+  aspect-ratio:16/9; height:auto; object-fit:cover; flex:0 0 auto;
+}
+
+/* Botón “Agregar” */
+.add-btn{
+  position:absolute; left:12px; top:12px; z-index:3;
+  display:inline-flex; align-items:center; gap:8px;
+  height:34px; padding:0 12px;
+  font-weight:700; font-size:13px;
+  color: var(--text);
+  background: color-mix(in oklab, var(--surface-2) 90%, transparent);
+  border:1px solid var(--border-strong);
+  border-radius:999px;
+  box-shadow: var(--elev-soft);
+  backdrop-filter:saturate(140%) blur(6px);
+  cursor:pointer;
+}
+.add-btn svg{ width:16px; height:16px }
+
+/* Cuerpo: nombre + precio */
+.card.product .card-body{
+  background: var(--surface); 
+  padding:12px 14px;
+  display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+}
+.card.product .name{
+  margin:0; font-size:15px; font-weight:700; letter-spacing:.2px; color: var(--text); line-height:1.2;
+  max-width:70%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.card.product .price{
+  margin-left:auto; font-weight:800; font-size:15px; color: var(--text);
+  background: var(--chip-bg); border:1px solid var(--border);
+  padding:6px 10px; border-radius:10px; white-space:nowrap;
+}
+
+/* ===== FIX PAGINACIÓN – contraste y theming ===== */
+
+/* Variables específicas para los botones de paginación */
+:root{
+  --pagebtn-bg: var(--surface-2);
+  --pagebtn-fg: var(--text);
+  --pagebtn-border: var(--border);
+  --pagebtn-disabled-bg: #23323b;   /* dark */
+  --pagebtn-disabled-fg: #8aa0ad;   /* dark */
+}
+:root[data-theme="light"]{
+  --pagebtn-bg: var(--surface-2);
+  --pagebtn-fg: var(--text);
+  --pagebtn-border: var(--border);
+  --pagebtn-disabled-bg: #d7e1e7;   /* light */
+  --pagebtn-disabled-fg: #6e8190;   /* light */
+}
+
+/* Botón base (fuerza el esquema del tema, por si queda algo viejo pisando) */
+.pagination .page-btn{
+  background: var(--pagebtn-bg) !important;
+  color: var(--pagebtn-fg) !important;
+  border: 1px solid var(--pagebtn-border) !important;
+  height: 40px; padding: 0 16px; border-radius: 999px;
+  font-weight: 800; cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Hover/focus solo cuando está habilitado */
+.pagination .page-btn:not(:disabled):hover,
+.pagination .page-btn:not(:disabled):focus-visible{
+  background: var(--brand) !important;
+  color: #fff !important;
+  border-color: var(--brand) !important;
+}
+
+/* Disabled: sin bajar opacidad (para no perder contraste) */
+.pagination .page-btn:disabled{
+  background: var(--pagebtn-disabled-bg) !important;
+  color: var(--pagebtn-disabled-fg) !important;
+  border-color: var(--pagebtn-border) !important;
+  opacity: 1 !important;
+  cursor: not-allowed;
+}
+
+/* Texto central "Página X de Y": subí el contraste */
+.pagination .page-info{
+  color: var(--text) !important;   /* antes estaba demasiado “muted” */
+  font-weight: 700;
+}
+
+
+/* =========================
+   FAB (chat)
+   ========================= */
+.fab{
+  position:fixed; right:28px; bottom:28px; width:64px; height:64px; border-radius:999px;
+  background: var(--surface-2); border:1px solid var(--border); display:grid; place-items:center; box-shadow: var(--elev);
+  cursor:pointer;
+}
+.fab:hover{ border-color: var(--brand); }
+
+/* =========================
+   ACCESIBILIDAD / FOCUS
+   ========================= */
+:focus-visible{ outline: 2px solid var(--brand); outline-offset: 2px; }

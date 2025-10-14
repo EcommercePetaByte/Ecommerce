@@ -1,0 +1,26 @@
+/* ===== Tema oscuro (por defecto) ===== */
+:root{
+  --bg:#0e1114; --surface:#12181f; --surface-2:#0f1a22;
+  --text:#e8f0f2; --muted:#9fb3bd;
+  --brand:#2d6f7e; --brand-2:#6fd0de; --ok:#a3ffd1;
+
+  /* nuevos tokens para bordes/chips */
+  --border: rgba(255,255,255,.08);
+  --border-strong: rgba(255,255,255,.12);
+  --chip-bg: #12212a;           /* fondos de chips/precio */
+  --elev: 0 10px 30px rgba(0,0,0,.35);
+  --elev-soft: 0 6px 18px rgba(0,0,0,.25);
+}
+
+/* ===== Tema claro ===== */
+:root[data-theme="light"]{
+  --bg:#f7fafc; --surface:#ffffff; --surface-2:#f2f6f9;
+  --text:#20313b; --muted:#6e8190;
+  --brand:#2d6f7e; --brand-2:#2d6f7e; --ok:#1f9d55;
+
+  --border: rgba(0,0,0,.10);
+  --border-strong: rgba(0,0,0,.14);
+  --chip-bg:#e9f0f4;
+  --elev: 0 10px 30px rgba(0,0,0,.10);
+  --elev-soft: 0 6px 18px rgba(0,0,0,.08);
+}

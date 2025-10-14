@@ -1,0 +1,39 @@
+/* ============== AUTH LAYOUT (limpio, sin paneles extra) ============== */
+
+.auth-layout{
+  position: relative;            /* base para z-index */
+  display:flex; justify-content:center; align-items:center;
+  min-height:100vh;
+  background: var(--bg);
+  padding: 24px;
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* ⛔️ Nuke: elimina cualquier pseudo/decor que pudiera quedar */
+.auth-layout::before,
+.auth-layout::after,
+.auth-layout *::before,
+.auth-layout *::after{
+  content: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+/* ⛔️ Nuke 2: si hay algún hermano decorativo, ocultalo */
+.auth-layout > :not(.auth-box){
+  display: none !important;
+}
+
+/* Tarjeta */
+/* 🚫 Desactiva la tarjeta del layout: sin fondo, sin borde, sin sombra */
+.auth-box{
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  max-width: none !important;
+}
+
+
