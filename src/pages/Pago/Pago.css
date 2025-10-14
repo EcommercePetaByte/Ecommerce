@@ -1,0 +1,247 @@
+/* Pago.css
+   Estilo coherente con el tema principal (usa variables definidas en :root del otro CSS)
+*/
+
+:root{
+  /* si no están definidas en el scope global, define valores por defecto seguros */
+  --bg: #0e1114;
+  --surface: #12181f;
+  --surface-2: #0f1a22;
+  --brand: #2d6f7e;
+  --brand-2: #6fd0de;
+  --text: #e8f0f2;
+  --muted: #9fb3bd;
+  --radius: 14px;
+  --shadow-soft: 0 6px 18px rgba(0,0,0,.25);
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+/* Contenedor principal */
+.pago-container{
+  width: min(96vw, 900px);
+  margin: 28px auto;
+  padding: 28px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--surface) 96%, transparent), var(--surface));
+  border: 1px solid rgba(255,255,255,.04);
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  display: grid;
+  gap: 18px;
+}
+
+/* Título */
+.pago-container h1{
+  margin: 0;
+  font-size: clamp(18px, 3.6vw, 26px);
+  font-weight: 900;
+  letter-spacing: .2px;
+}
+
+/* Selector de métodos */
+.pago-metodos{
+  display: inline-flex;
+  gap: 8px;
+  background: transparent;
+  padding: 6px;
+  border-radius: 999px;
+}
+.pago-metodos button{
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(255,255,255,.06);
+  background: color-mix(in oklab, var(--surface-2) 85%, transparent);
+  color: var(--muted);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all .12s ease;
+}
+.pago-metodos button:hover{
+  transform: translateY(-2px);
+  color: var(--text);
+  border-color: rgba(111,208,222,.14);
+  box-shadow: var(--shadow-soft);
+}
+.pago-metodos button.active{
+  background: linear-gradient(90deg, var(--brand-2), var(--brand));
+  color: #062427; /* contraste */
+  border-color: rgba(0,0,0,.12);
+  box-shadow: 0 8px 24px rgba(45,111,126,.14);
+}
+
+/* Formulario */
+.pago-form{
+  display: grid;
+  gap: 12px;
+  background: transparent;
+  padding-top: 4px;
+}
+.pago-form label{
+  display: grid;
+  gap: 8px;
+  font-weight: 800;
+  color: var(--muted);
+  font-size: 13px;
+}
+.pago-form label input{
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: var(--surface-2);
+  color: var(--text);
+  outline: none;
+  font-weight: 800;
+}
+.pago-form label input::placeholder{
+  color: rgba(255,255,255,.35);
+  font-weight: 600;
+}
+
+/* Inputs en una row (vencimiento / cvc) */
+.pago-form .row{
+  display: grid;
+  grid-template-columns: 1fr 110px;
+  gap: 10px;
+}
+@media (max-width:520px){
+  .pago-form .row{ grid-template-columns: 1fr 1fr; }
+}
+
+/* Acciones */
+.pago-acciones{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:flex-end;
+  margin-top:6px;
+}
+
+/* Botones específicos */
+.btn-cancelar, .pagar-btn, .volver-btn{
+  height:44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-weight:900;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,.06);
+  display:inline-grid;
+  place-items:center;
+}
+
+/* Cancelar: ghost/secondary */
+.btn-cancelar{
+  background: transparent;
+  color: var(--muted);
+}
+.btn-cancelar:hover{
+  border-color: rgba(111,208,222,.12);
+  color: var(--brand-2);
+  transform: translateY(-2px);
+}
+
+/* Pagar: primary */
+.pagar-btn{
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+.pagar-btn:hover{
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(45,111,126,.12);
+}
+
+/* QR view */
+.pago-qr{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,.04);
+  border-radius: 12px;
+}
+.pago-qr h2{
+  margin:0;
+  font-size: 16px;
+  font-weight:900;
+  color: var(--text);
+  text-align:center;
+}
+.pago-qr img{
+  width: min(240px, 48vw);
+  height: auto;
+  background: #fff;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  object-fit: contain;
+}
+
+/* Volver a Tarjeta */
+.volver-btn{
+  background: transparent;
+  color: var(--text);
+  border:1px solid rgba(255,255,255,.06);
+}
+.volver-btn:hover{
+  color: var(--brand-2);
+  border-color: rgba(111,208,222,.12);
+  transform: translateY(-2px);
+}
+
+/* Estados de foco accesible */
+.pago-metodos button:focus-visible,
+.pago-form label input:focus-visible,
+.btn-cancelar:focus-visible,
+.pagar-btn:focus-visible,
+.volver-btn:focus-visible{
+  outline: 2px solid color-mix(in oklab, var(--brand-2) 60%, transparent);
+  outline-offset: 3px;
+}
+
+/* Mensaje pequeño debajo del formulario (opcional) */
+.pago-help{
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+  font-weight:700;
+}
+
+/* Mensaje de exito (toast temporal si querés usarlo) */
+.pago-success{
+  background: linear-gradient(90deg, color-mix(in oklab, var(--brand-2) 78%, transparent), var(--brand));
+  color: #062427;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight:900;
+  box-shadow: var(--shadow);
+  display:inline-block;
+}
+
+/* Adaptabilidad */
+@media (max-width:720px){
+  .pago-container{
+    padding: 18px;
+  }
+  .pago-metodos{ gap:6px; }
+  .pago-metodos button{ padding:8px 10px; font-size:13px; }
+  .pago-acciones{ justify-content: center; flex-direction: column-reverse; gap:8px; }
+  .pago-acciones .pagar-btn{ width:100%; }
+  .pago-acciones .btn-cancelar{ width:100%; }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .pago-metodos button,
+  .pago-form label input,
+  .btn-cancelar,
+  .pagar-btn,
+  .volver-btn{
+    transition: none;
+  }
+}

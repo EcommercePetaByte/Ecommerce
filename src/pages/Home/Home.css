@@ -1,0 +1,315 @@
+:root{
+  --bg:#0e1114; --surface:#12181f; --surface-2:#0f1a22;
+  --brand:#2d6f7e; --brand-2:#6fd0de; --text:#e8f0f2; --muted:#9fb3bd; --ok:#a3ffd1;
+
+  --radius:18px; --shadow:0 10px 30px rgba(0,0,0,.35); --shadow-soft:0 6px 18px rgba(0,0,0,.25);
+
+  --maxw: clamp(1200px, 96vw, 1600px);
+  --card-min: 260px;
+
+  /* alto sugerido para hero old (ya no usamos) */
+  --carousel-min-h: 220px; --carousel-vh: 30vh; --carousel-max-h: 360px;
+}
+
+/* Base */
+*{ box-sizing:border-box }
+html, body, #root{ height:100% }
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+  line-height:1.4;
+}
+a{ color:inherit; text-decoration:none }
+figure{ margin:0 }
+
+.container{
+  width:min(96vw, var(--maxw));
+  margin:24px auto 80px;
+  padding:0 12px;
+}
+.section-title{
+  margin:0; font-size:clamp(20px,2.4vw,26px);
+  font-weight:800; letter-spacing:.3px; color:var(--text);
+}
+
+/* ========== (ELIMINADO carrusel viejo) ========== */
+/* Se removieron .carousel-wrap, .carousel, .slide, .arrow */
+
+/* ========== BENEFICIOS (USPs) ========== */
+.usps{
+  margin:18px 0 10px;
+  display:grid; grid-template-columns: repeat(4, 1fr); gap:10px;
+}
+.usp{
+  background:var(--surface-2); border:1px solid rgba(255,255,255,.08);
+  border-radius:12px; padding:10px 12px; display:flex; align-items:center; gap:8px;
+  color:var(--text); font-weight:800;
+}
+@media (max-width:900px){ .usps{ grid-template-columns: 1fr 1fr } }
+@media (max-width:520px){ .usps{ grid-template-columns: 1fr } }
+
+/* ========== BLOQUES / GRILLAS ========== */
+.block{ margin-top:22px }
+.block-head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:8px;
+}
+.link-more{
+  color:var(--muted); font-weight:900; border-bottom:1px dashed var(--muted);
+}
+.link-more:hover{ color:var(--text); border-bottom-color:var(--text) }
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
+  gap: clamp(14px, 2vw, 24px);
+  align-items:start;
+}
+.card.product{
+  position:relative; background:#0d141a; border:1px solid rgba(255,255,255,.06);
+  border-radius:18px; overflow:hidden; box-shadow:var(--shadow-soft);
+  transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  display:flex; flex-direction:column;
+}
+.card.product:hover{ transform:translateY(-3px); box-shadow:var(--shadow); border-color:rgba(111,208,222,.22) }
+.img-wrap{ position:relative; display:block }
+.badge{
+  position:absolute; left:10px; bottom:10px;
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 8px; border-radius:999px; font-size:12px; font-weight:900;
+  background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.12);
+}
+.card.product img{
+  display:block; width:100%; aspect-ratio:16/9; height:auto; object-fit:cover; flex:0 0 auto;
+}
+
+/* Botón Agregar */
+.add-btn{
+  position:absolute; left:12px; top:12px; z-index:3;
+  display:inline-flex; align-items:center; gap:8px;
+  height:34px; padding:0 12px; font-weight:700; font-size:13px;
+  color:#e8f0f2; background:rgba(32,51,62,.8);
+  border:1px solid rgba(255,255,255,.14); border-radius:999px;
+  box-shadow:var(--shadow-soft); backdrop-filter:saturate(140%) blur(6px); cursor:pointer;
+}
+.add-btn svg{ width:16px; height:16px }
+
+/* Cuerpo */
+.card.product .card-body{
+  background:#0d141a; padding:12px 14px; display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+}
+.card.product .name{
+  margin:0; font-size:15px; font-weight:700; letter-spacing:.2px; color:#eaf6f8; line-height:1.2;
+  max-width:70%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.card.product .price{
+  margin-left:auto; font-weight:800; font-size:15px; color:#cfe9ee; background:#12212a; border:1px solid rgba(255,255,255,.08);
+  padding:6px 10px; border-radius:10px; white-space:nowrap;
+}
+
+/* ========== MARCAS ========== */
+.brands{
+  margin: 22px 0 6px; padding: 12px;
+  display:flex; gap:20px; justify-content:space-between; align-items:center; flex-wrap:wrap;
+  background:var(--surface); border:1px solid rgba(255,255,255,.06); border-radius:14px;
+}
+.brands img{ height:24px; opacity:.85; filter: grayscale(1) contrast(1.1) }
+.brands img:hover{ opacity:1; filter:none }
+
+/* ========== NEWSLETTER ========== */
+.newsletter{
+  margin-top: 22px; background:var(--surface); border:1px solid rgba(255,255,255,.06);
+  border-radius:18px; padding:16px; text-align:center;
+}
+.newsletter h3{ margin:0 0 10px; font-size:18px; font-weight:900 }
+.newsletter form{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap }
+.newsletter input{
+  height:42px; padding:0 14px; border-radius:999px; border:1px solid rgba(255,255,255,.1);
+  background:var(--surface-2); color:var(--text); min-width:240px; outline:0;
+}
+.newsletter button{
+  height:42px; padding:0 16px; border-radius:999px; border:1px solid var(--brand); background:var(--brand); color:#fff; font-weight:900; cursor:pointer;
+}
+.newsletter .mini{ margin-top:8px; color:var(--muted); font-size:12px }
+
+/* ========== FAB ========== */
+.fab{
+  position:fixed; right:28px; bottom:28px; width:64px; height:64px; border-radius:999px;
+  background:#1b2a33; border:1px solid rgba(255,255,255,.08);
+  display:grid; place-items:center; box-shadow:var(--shadow); color:#fff; cursor:pointer;
+}
+
+/* ========== TOAST ========== */
+.toast{
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+  background: color-mix(in oklab, var(--surface) 92%, transparent);
+  border:1px solid rgba(255,255,255,.12);
+  color: var(--text); padding: 10px 14px; border-radius: 12px; box-shadow: var(--shadow-soft);
+  font-weight:900;
+  animation: toast-in .2s ease-out;
+}
+@keyframes toast-in{ from{ transform: translateX(-50%) translateY(10px); opacity:0 } to{ transform: translateX(-50%) translateY(0); opacity:1 } }
+
+/* ====== CAROUSEL HERO NUEVO ====== */
+.carousel-hero{
+  position:relative; width:100%; border-radius:18px; overflow:hidden;
+  aspect-ratio: 16/5;
+  background: #0b1217;
+}
+@media (max-width: 900px){ .carousel-hero{ aspect-ratio: 16/7 } }
+@media (max-width: 520px){ .carousel-hero{ aspect-ratio: 16/9 } }
+
+.hero-slide{ position:relative; width:100%; height:100% }
+.hero-slide img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform: scale(1.02); }
+
+.hero-gradient{ position:absolute; inset:0; z-index:1;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.00) 0%, rgba(0,0,0,.35) 100%),
+    linear-gradient(90deg, rgba(0,0,0,.60) 0%, rgba(0,0,0,0) 55%);
+  pointer-events:none;
+}
+
+.hero-content{
+  position:absolute; inset:0; z-index:2;
+  display:flex; flex-direction:column; justify-content:center; gap:10px;
+  padding: clamp(16px, 5vw, 40px);
+  max-width:min(680px, 90%);
+  color:#fff;
+}
+
+/* feedback al pasar y foco en flechas */
+.hero-arrow:hover { filter: brightness(1.08); }
+.hero-arrow:focus-visible { outline: 2px solid var(--brand-2); outline-offset: 2px; }
+
+/* accesibilidad/hover del CTA del hero */
+.hero-cta:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.hero-cta:hover { transform: translateY(-1px); }
+
+
+
+.hero-title{
+  margin:0; font-size: clamp(20px, 4.5vw, 40px);
+  font-weight: 900; letter-spacing: .3px;
+  text-shadow: 0 6px 30px rgba(0,0,0,.35);
+}
+.hero-sub{
+  margin:0; color:#e8f0f2; opacity:.9; font-size: clamp(14px, 2.5vw, 18px);
+}
+.hero-cta{
+  align-self:flex-start; margin-top:8px; height:44px; display:inline-grid; place-items:center;
+  padding: 0 18px; border-radius: 999px;
+  background: var(--brand); color:#fff; font-weight:900; border:1px solid var(--brand);
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+.hero-cta:hover{ filter: brightness(1.05) }
+
+
+.hero-progress{
+  position:absolute; left:0; right:0; bottom:0; height:3px; z-index:3; /* ✅ por encima del gradient */
+  display:block; background: rgba(255,255,255,.18); overflow:hidden;
+}
+.hero-progress::after{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:100%;
+  background: linear-gradient(90deg, var(--brand-2), var(--brand));
+  animation: hero-pg 5s linear forwards;
+}
+@keyframes hero-pg{ from{ transform: translateX(-100%) } to{ transform: translateX(0) } }
+
+/* Flechas */
+.hero-arrow{
+  position:absolute; top:50%; transform: translateY(-50%);
+  width:42px; height:42px; display:grid; place-items:center; border-radius:999px;
+  background: color-mix(in oklab, var(--surface) 88%, transparent);
+  border:1px solid rgba(255,255,255,.15); box-shadow: var(--shadow-soft);
+  color:#fff; cursor:pointer;
+}
+.hero-arrow.left{ left:12px } .hero-arrow.right{ right:12px }
+
+/* Dots */
+.hero-dots{
+  position:absolute; left:50%; transform:translateX(-50%); bottom:10px;
+  display:flex; gap:8px; padding:6px 10px; border-radius:999px;
+  background: color-mix(in oklab, var(--surface) 75%, transparent);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(6px) saturate(120%);
+}
+.hero-dots .dot{
+  width:8px; height:8px; border-radius:999px; background:#fff; opacity:.4; border:0;
+  cursor:pointer;
+}
+.hero-dots .dot.active{ opacity:1; width:26px; border-radius:999px;
+  background: linear-gradient(90deg, var(--brand-2), var(--brand));
+}
+
+/* Respeta reduce-motion */
+@media (prefers-reduced-motion: reduce){
+  .hero-progress::after{ animation: none }
+}
+
+/* ===== Tema claro para HERO (opcional si usás data-theme="light") ===== */
+:root[data-theme="light"] .hero-gradient{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.00) 0%, rgba(255,255,255,.45) 100%),
+    linear-gradient(90deg, rgba(255,255,255,.65) 0%, rgba(255,255,255,0) 55%);
+}
+:root[data-theme="light"] .hero-arrow,
+:root[data-theme="light"] .hero-dots{
+  background: color-mix(in oklab, #ffffff 88%, transparent);
+  border-color: rgba(0,0,0,.12);
+  color: #20313b;
+}
+
+/* =========================
+   Ajustes de HERO en tema claro
+   ========================= */
+:root[data-theme="light"] .hero-gradient{
+  /* mantenemos overlay oscuro para que el texto SIEMPRE sea legible
+     aunque la imagen sea clara */
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.00) 0%, rgba(0,0,0,.35) 100%),
+    linear-gradient(90deg, rgba(0,0,0,.60) 0%, rgba(0,0,0,0) 55%);
+}
+
+/* texto del hero en claro: siempre blanco sobre overlay oscuro */
+:root[data-theme="light"] .hero-content{
+  color: #fff;
+}
+:root[data-theme="light"] .hero-title{ color:#fff }
+:root[data-theme="light"] .hero-sub{ color: #f3f7fa; opacity:.95 }
+
+/* flechas: dejar de usar blanco sólido; sutil “chip” claro con icono oscuro */
+:root[data-theme="light"] .hero-arrow{
+  background: rgba(255,255,255,.85);
+  border-color: rgba(0,0,0,.12);
+  color: #20313b;          /* icono oscuro (lucide usa currentColor) */
+  box-shadow: 0 6px 18px rgba(0,0,0,.12);
+}
+:root[data-theme="light"] .hero-arrow:hover{
+  filter: none;
+  background: rgba(255,255,255,.95);
+}
+
+/* dots en claro: pastilla clarita y activo con brand */
+:root[data-theme="light"] .hero-dots{
+  background: rgba(255,255,255,.85);
+  border-color: rgba(0,0,0,.12);
+}
+:root[data-theme="light"] .hero-dots .dot{
+  background:#20313b; opacity:.35;
+}
+:root[data-theme="light"] .hero-dots .dot.active{
+  opacity:1; background: linear-gradient(90deg, var(--brand-2), var(--brand));
+}
+
+/* badge sobre fotos: en claro usar cápsula clara con texto oscuro */
+:root[data-theme="light"] .badge{
+  background: rgba(255,255,255,.82);
+  border-color: rgba(0,0,0,.12);
+  color: #20313b;
+}
+
+/* CTA del hero: mantener contraste también en claro */
+:root[data-theme="light"] .hero-cta{
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
