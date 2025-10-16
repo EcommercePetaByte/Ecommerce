@@ -36,7 +36,6 @@ function CarouselHero() {
   const next = () => setIndex((i) => (i + 1) % total);
   const goTo = (i) => setIndex(i);
 
-  // Teclado ← →
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "ArrowLeft") prev();
@@ -46,7 +45,6 @@ function CarouselHero() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Autoplay (pausa en hover o cuando la pestaña no está visible)
   useEffect(() => {
     const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mql.matches) return;
@@ -69,22 +67,19 @@ function CarouselHero() {
       onMouseLeave={() => setHover(false)}
     >
       <figure className="hero-slide" key={current.id}>
-  <img src={current.img} alt="" loading="eager" />
-  <div className="hero-gradient" aria-hidden="true" />
+        <img src={current.img} alt="" loading="eager" />
+        <div className="hero-gradient" aria-hidden="true" />
 
-  {/* Overlay de contenido */}
-  <figcaption className="hero-content" aria-live="polite">
-    <h2 className="hero-title">{current.title}</h2>
-    <p className="hero-sub">{current.subtitle}</p>
-    <Link className="hero-cta" to={current.ctaHref}>
-      {current.ctaText}
-    </Link>
-  </figcaption>
+        <figcaption className="hero-content" aria-live="polite">
+          <h2 className="hero-title">{current.title}</h2>
+          <p className="hero-sub">{current.subtitle}</p>
+          <Link className="hero-cta" to={current.ctaHref}>
+            {current.ctaText}
+          </Link>
+        </figcaption>
 
-  {/* ✅ Barra de progreso a nivel del slide (full width) */}
-  <span key={index} className="hero-progress" />
-</figure>
-
+        <span key={index} className="hero-progress" />
+      </figure>
 
       <button className="hero-arrow left" onClick={prev} aria-label="Anterior">
         <ChevronLeft size={20} />
@@ -142,6 +137,22 @@ export default function Home({ isAuthenticated: propAuth }) {
     });
   }, []);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 12;
+  const totalPages = Math.ceil(products.length / productsPerPage);
+
+  const currentProducts = useMemo(() => {
+    const start = (currentPage - 1) * productsPerPage;
+    const end = start + productsPerPage;
+    return products.slice(start, end);
+  }, [currentPage, products]);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const toARS = (n) =>
     Number(n).toLocaleString("es-AR", {
       style: "currency",
@@ -170,7 +181,6 @@ export default function Home({ isAuthenticated: propAuth }) {
       <Header />
 
       <main className="container home">
-        {/* Carrusel mejorado */}
         <CarouselHero />
 
         {/* Beneficios */}
@@ -180,6 +190,33 @@ export default function Home({ isAuthenticated: propAuth }) {
           <div className="usp"><RotateCcw size={18} /><span>Devoluciones fáciles</span></div>
           <div className="usp"><Headphones size={18} /><span>Soporte 24/7</span></div>
         </section>
+
+        {/* Productos con paginación */}
+        <section className="block">
+          <div className="block-head">
+            <h2 className="section-title">Todos los productos</h2>
+          </div>
+
+          <div className="grid">
+            {currentProducts.map((p) => (
+              <article className="card product" key={p.id}>
+                <button className="add-btn" type="button" aria-label={`Agregar ${p.name}`} onClick={() => handleAdd(p)}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+                  <span>Agregar</span>
+                </button>
+
+                <Link to={`/producto/${p.id}`} className="img-wrap">
+                  <img src={p.img} alt={p.name} loading="lazy" />
+                </Link>
+
+                <div className="card-body">
+                  <h3 className="name"><Link to={`/producto/${p.id}`}>{p.name}</Link></h3>
+                  <div className="price">{toARS(p.price)}</div>
+                </div>
+              </article>
+            ))}
+          </div>
+
 
         {/* Destacados */}
         <section className="block">
@@ -235,6 +272,22 @@ export default function Home({ isAuthenticated: propAuth }) {
                 </div>
               </article>
             ))}
+          </div>
+        </section>
+
+         {/* Paginación */}
+          <div className="pagination">
+            <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>«</button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                className={currentPage === i + 1 ? "active" : ""}
+                onClick={() => handlePageChange(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>»</button>
           </div>
         </section>
 

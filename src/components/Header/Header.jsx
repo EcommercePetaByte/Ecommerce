@@ -3,12 +3,14 @@ import Logo from "../Logo/Logo";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { UserRound, ShoppingCart, Lightbulb, ChevronDown, Search } from "lucide-react";
+import { getCarrito } from "../../carrito.js";
 
 const Header = () => {
   const navigate = useNavigate();
   const [openCategorias, setOpenCategorias] = useState(false);
   const [searchText, setSearchText] = useState("");
   const categoriasRef = useRef(null);
+  const [cartCount, setCartCount] = useState(0);
 
   // ====== Tema (oscuro / claro) ======
   const [theme, setTheme] = useState(() => {
@@ -34,7 +36,29 @@ const Header = () => {
     "Sillas"
   ];
 
-  // cerrar al click afuera
+  // ====== Detectar cambios en el carrito ======
+  useEffect(() => {
+    const actualizar = () => {
+      const carrito = getCarrito();
+      const totalItems = carrito.reduce((acc, p) => acc + p.cantidad, 0);
+      setCartCount(totalItems);
+    };
+
+    actualizar(); // primera carga
+
+    // escucha cambios en localStorage
+    window.addEventListener("storage", actualizar);
+
+    // backup: chequeo periódico por si cambia en la misma pestaña
+    const interval = setInterval(actualizar, 500);
+
+    return () => {
+      window.removeEventListener("storage", actualizar);
+      clearInterval(interval);
+    };
+  }, []);
+
+  // cerrar categorías al click afuera
   useEffect(() => {
     function onDocClick(e) {
       if (!categoriasRef.current) return;
@@ -68,31 +92,31 @@ const Header = () => {
           />
         </form>
 
-        {/* Modo claro/oscuro */}
-
-
         <div className="icons">
           {/* Perfil */}
           <Link to="/perfil" className="icon-btn" title="Perfil">
             <UserRound size={20} />
           </Link>
 
-          {/* Carrito */}
-          <Link to="/carrito" className="icon-btn" title="Carrito">
-            <ShoppingCart size={22} />
-          </Link>
-
-        <button
-  className={`icon-btn foco-btn ${theme === "light" ? "on" : ""}`}
-  onClick={toggleTheme}
-  title="Cambiar tema"
->
-  <Lightbulb
-    size={22}
-    color={theme === "light" ? "#fff" : "currentColor"}
-    fill={theme === "light" ? "#fff" : "none"}
-  />
-</button>
+          {/* Carrito con contador */}
+          <div className="cart-icon-wrapper">
+            <Link to="/carrito" className="icon-btn cart-btn" title="Carrito">
+              <ShoppingCart size={22} />
+              {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+            </Link>
+          </div>
+          {/* Botón de tema */}
+          <button
+            className={`icon-btn foco-btn ${theme === "light" ? "on" : ""}`}
+            onClick={toggleTheme}
+            title="Cambiar tema"
+          >
+            <Lightbulb
+              size={22}
+              color={theme === "light" ? "#fff" : "currentColor"}
+              fill={theme === "light" ? "#fff" : "none"}
+            />
+          </button>
 
           {/* Categorías */}
           <div className="categorias-wrapper" ref={categoriasRef}>
@@ -128,13 +152,13 @@ const Header = () => {
           </div>
 
           {/* Login */}
-         <button
-  className="categorias-btn login-btn"
-  onClick={() => navigate("/login")}
-  type="button"
->
-  Login
-</button>
+          <button
+            className="categorias-btn login-btn"
+            onClick={() => navigate("/login")}
+            type="button"
+          >
+            Login
+          </button>
         </div>
       </div>
     </header>

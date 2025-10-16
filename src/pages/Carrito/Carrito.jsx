@@ -8,9 +8,26 @@ import {
 } from "../../carrito.js";
 import EmptyCart from "./Carrito_Vacio.jsx";
 import "./Carrito.css";
-import { Trash2, Minus, Plus, Tag, Truck } from "lucide-react";
+import { Trash2, Tag, Truck } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import Chatbot from "../../components/Chatbot/Chatbot.jsx";
+
+// --- Componentes independientes del stepper ---
+function DecreaseButton({ onClick }) {
+  return (
+    <button className="stepper-decrease" onClick={onClick} aria-label="Disminuir">-</button>
+  );
+}
+
+function Quantity({ value }) {
+  return <span className="stepper-qty">{value}</span>;
+}
+
+function IncreaseButton({ onClick }) {
+  return (
+    <button className="stepper-increase" onClick={onClick} aria-label="Aumentar">+</button>
+  );
+}
 
 export default function Carrito() {
   const [productos, setProductos] = useState([]);
@@ -87,9 +104,9 @@ export default function Carrito() {
 
                   <div className="controls">
                     <div className="stepper">
-                      <button onClick={() => handleRestar(p.id)} aria-label="Disminuir"><Minus size={16} /></button>
-                      <span className="qty">{p.cantidad}</span>
-                      <button onClick={() => handleSumar(p.id)} aria-label="Aumentar"><Plus size={16} /></button>
+                      <DecreaseButton onClick={() => handleRestar(p.id)} />
+                      <Quantity value={p.cantidad} />
+                      <IncreaseButton onClick={() => handleSumar(p.id)} />
                     </div>
 
                     <button className="remove" onClick={() => handleQuitar(p.id)}>
@@ -159,16 +176,15 @@ export default function Carrito() {
             </p>
           </aside>
         </section>
-         {/** Chatbot - botón flotante */}
-          <button className="fab" title="Ayuda" onClick={() => setChatOpen(!chatOpen)}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-              <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-            </svg>
-          </button>
-          
-          {chatOpen && <Chatbot />}
+        {/** Chatbot - botón flotante */}
+        <button className="fab" title="Ayuda" onClick={() => setChatOpen(!chatOpen)}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+          </svg>
+        </button>
+
+        {chatOpen && <Chatbot />}
       </main>
     </div>
   );
 }
-

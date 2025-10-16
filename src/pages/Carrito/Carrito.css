@@ -1,102 +1,287 @@
 /* Layout general */
-.cart-wrap{
-  width:min(96vw, var(--maxw));
+.cart-wrap {
+  width: min(96vw, var(--maxw));
   margin: 24px auto 80px;
   color: var(--text);
 }
-.cart-head{
-  display:flex; align-items:flex-end; gap:10px; margin-bottom:10px;
+.cart-head {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
 }
-.cart-head h1{ margin:0; font-size:22px; font-weight:900 }
-.cart-head .muted{ color: var(--muted); font-weight:800 }
+.cart-head h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+}
+.cart-head .muted {
+  color: var(--muted);
+  font-weight: 800;
+}
 
 /* Grid */
-.cart-grid{
-  display:grid; gap:18px;
+.cart-grid {
+  display: grid;
+  gap: 18px;
   grid-template-columns: 1.6fr .9fr;
 }
-@media (max-width: 980px){
-  .cart-grid{ grid-template-columns: 1fr; }
+@media (max-width: 980px) {
+  .cart-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Lista de líneas */
-.cart-list{
+.cart-list {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 18px; padding: 12px;
+  border-radius: 18px;
+  padding: 16px;
 }
-.line{
-  display:grid; grid-template-columns: 88px 1fr auto; gap:12px;
-  padding: 10px; border-radius:12px;
-  border:1px solid var(--border);
+.line {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
   background: var(--surface-2);
 }
-.line + .line{ margin-top:10px }
-.thumb{ width:88px; height:88px; border-radius:10px; object-fit:cover }
-.line-info{ display:grid; gap:6px }
-.name{ font-weight:900; color: var(--text) }
-.meta{ color: var(--muted); font-weight:800 }
-.price-unit{ background: var(--chip-bg); border:1px solid var(--border); padding:2px 8px; border-radius:8px }
+.line + .line {
+  margin-top: 12px;
+}
+.thumb {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+.line-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.name {
+  font-weight: 900;
+  color: var(--text);
+}
+.meta {
+  color: var(--muted);
+  font-weight: 800;
+}
+.price-unit {
+  background: var(--chip-bg);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+}
 
-.controls{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
-.stepper{
-  display:inline-flex; align-items:center; gap:8px;
-  background: var(--surface); border:1px solid var(--border); border-radius:10px; height:36px; padding:0 6px;
+/* Controles */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: nowrap;
 }
-.stepper button{
-  width:28px; height:28px; border-radius:8px; border:0; cursor:pointer;
-  background: var(--surface-2); color: var(--text);
-  display:grid; place-items:center;
-}
-.stepper .qty{ width:36px; text-align:center; font-weight:900 }
-.remove{
-  background: transparent; border:0; color: #ff8484; font-weight:900; cursor:pointer;
-  display:inline-flex; align-items:center; gap:6px; height:36px;
-}
-.remove:hover{ text-decoration: underline }
 
-.line-subtotal{ align-self:center; font-weight:900 }
-
-/* Acciones bajo lista */
-.cart-actions{
-  display:flex; justify-content:space-between; align-items:center; gap:10px;
-  margin-top:12px; padding: 8px 4px;
-}
-.btn{
-  height:42px; padding:0 16px; border-radius:999px; cursor:pointer;
-  border:1px solid var(--border); background: var(--surface-2); color: var(--text); font-weight:900;
-}
-.btn.ghost{ background: transparent }
-.btn.danger{ background:#e64545; border-color:#e64545; color:#fff }
-.btn.primary{ background: var(--brand); border-color: var(--brand); color:#fff }
-.btn.primary.block{ width:100% }
-.btn:hover{ border-color: var(--brand); }
-
-/* Resumen */
-.cart-summary{
-  position: sticky; top: 86px; height: max-content;
+/* Contenedor del stepper */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 18px; padding: 14px;
+  border-radius: 10px;
+  padding: 0 4px;
+  min-width: 110px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+/* Botón de disminuir */
+.stepper-decrease {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Número del medio */
+.stepper-qty {
+  width: 28px;
+  font-size: 12px;
+  text-align: center;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botón de aumentar */
+.stepper-increase {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Botón quitar */
+.remove {
+  background: transparent;
+  border: 0;
+  color: #ff8484;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+}
+.remove:hover {
+  text-decoration: underline;
+}
+
+.line-subtotal {
+  align-self: center;
+  font-weight: 900;
+  font-size: 16px;
+}
+
+/* Acciones bajo lista */
+.cart-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 8px 4px;
+}
+.btn {
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-weight: 900;
+}
+.btn.ghost {
+  background: transparent;
+}
+.btn.danger {
+  background: #e64545;
+  border-color: #e64545;
+  color: #fff;
+}
+.btn.primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+.btn.primary.block {
+  width: 100%;
+}
+.btn:hover {
+  border-color: var(--brand);
+}
+
+/* Resumen */
+.cart-summary {
+  position: sticky;
+  top: 86px;
+  height: max-content;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
   box-shadow: var(--elev-soft);
 }
-.cart-summary h2{ margin:0 0 8px; font-size:18px; font-weight:900 }
-.row{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:6px 0 }
-.row .ship{ display:grid; gap:6px; justify-items:end }
-.row select{
-  height:34px; border-radius:10px; padding:0 10px;
-  background: var(--surface-2); border:1px solid var(--border); color: var(--text);
+.cart-summary h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 900;
 }
-.eta{ color: var(--muted); font-weight:800; display:inline-flex; align-items:center; gap:6px }
-.coupon-field{
-  flex:1; display:flex; align-items:center; gap:8px;
-  background: var(--surface-2); border:1px solid var(--border); border-radius:10px; padding: 0 10px; height:36px;
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
 }
-.coupon-field input{
-  flex:1; background:transparent; border:0; color: var(--text); outline:0; font-weight:900;
+.row .ship {
+  display: grid;
+  gap: 6px;
+  justify-items: end;
 }
-.discount{ color:#23d18b; font-weight:900 }
-.divider{ height:1px; background: var(--border); margin: 8px 0 }
-.total{ font-size:16px; font-weight:900 }
-.smallprint{ color: var(--muted); font-size:12px; margin:8px 2px 0 }
-
+.row select {
+  height: 34px;
+  border-radius: 10px;
+  padding: 0 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.eta {
+  color: var(--muted);
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.coupon-field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 10px;
+  height: 36px;
+}
+.coupon-field input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  outline: 0;
+  font-weight: 900;
+}
+.discount {
+  color: #23d18b;
+  font-weight: 900;
+}
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0;
+}
+.total {
+  font-size: 16px;
+  font-weight: 900;
+}
+.smallprint {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 8px 2px 0;
+}

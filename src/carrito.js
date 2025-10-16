@@ -1,58 +1,82 @@
 // ======================= FUNCIONES DE CARRITO =======================
 
-export const getCarrito = ()=>{
-    return JSON.parse(localStorage.getItem("carrito")) || [];
-
+// Obtener carrito desde localStorage, seguro ante errores
+export const getCarrito = () => {
+  try {
+    const data = JSON.parse(localStorage.getItem("carrito"));
+    if (!Array.isArray(data)) return [];
+    return data;
+  } catch {
+    return [];
+  }
 };
 
 // Guardar carrito en localStorage
+export const guardarCarrito = (carrito) => {
+  if (!Array.isArray(carrito)) carrito = [];
+  localStorage.setItem("carrito", JSON.stringify(carrito));
 
-export const guardarCarrito = (carrito) =>{
-    localStorage.setItem("carrito",JSON.stringify(carrito));
+  // Opcional: disparar evento para que otros componentes escuchen cambios
+  window.dispatchEvent(new Event("carritoActualizado"));
+  return carrito;
 };
 
-// Agregar producto al carrito
+// Agregar producto al carrito (opcional: cantidad)
+export const agregarAlCarrito = (producto, cantidad = 1) => {
+  if (!producto?.id) return getCarrito(); // validar id
+  if (cantidad <= 0) return getCarrito();
 
-export const agregarAlCarrito = (producto) =>{
-    let carrito = getCarrito();
+  const carrito = getCarrito();
+  const existente = carrito.find((p) => p.id === producto.id);
 
-    // buscar si ya existe
-    const index = carrito.findIndex((p) => p.id === producto.id);
+  if (existente) {
+    existente.cantidad = Number(existente.cantidad) + Number(cantidad);
+  } else {
+    carrito.push({ ...producto, cantidad: Number(cantidad) });
+  }
 
-    if (index !== -1){
-        carrito[index].cantidad += 1;
-    }else{
-        carrito.push({...producto, cantidad: 1});
-    }
-
-    guardarCarrito(carrito);
+  return guardarCarrito(carrito);
 };
 
-// Quitar un producto (Completamente) del carrito
+// Quitar producto del carrito completamente
+export const quitarDelCarrito = (id) => {
+  const carrito = getCarrito().filter((p) => p.id !== id);
+  return guardarCarrito(carrito);
+};
 
-export const quitarDelCarrito = (id) =>{
-    let carrito = getCarrito();
+// Actualizar cantidad de un producto
+export const actualizarCantidad = (id, nuevaCantidad) => {
+  let carrito = getCarrito();
+  nuevaCantidad = Number(nuevaCantidad) || 0;
+
+  if (nuevaCantidad <= 0) {
     carrito = carrito.filter((p) => p.id !== id);
-    guardarCarrito(carrito)
-};
-
-//Actualizar cantidad de un producto
-
-export const actualizarCantidad  = (id, nuevaCantidad) =>{
-    let carrito = getCarrito();
+  } else {
     carrito = carrito.map((p) =>
-    p.id === id ? { ...p, cantidad:nuevaCantidad} : p
-);
-guardarCarrito(carrito);
+      p.id === id ? { ...p, cantidad: nuevaCantidad } : p
+    );
+  }
+
+  return guardarCarrito(carrito);
 };
 
-//Vaciar Carrito
-export const vaciarCarrito = () =>{
-    localStorage.removeItem("carrito");
+// Vaciar carrito
+export const vaciarCarrito = () => {
+  localStorage.removeItem("carrito");
+  window.dispatchEvent(new Event("carritoActualizado"));
+  return [];
 };
 
-//Calcular total
+// Calcular total
 export const calculaTotal = () => {
-    const carrito = getCarrito();
-    return carrito.reduce((acc,p) => acc + p.price * p.cantidad, 0);
+  return getCarrito().reduce((acc, p) => {
+    const cantidad = Number(p.cantidad) || 0;
+    const precio = Number(p.price) || 0;
+    return acc + cantidad * precio;
+  }, 0);
+};
+
+// Contar cantidad total de items
+export const totalItems = () => {
+  return getCarrito().reduce((acc, p) => acc + (Number(p.cantidad) || 0), 0);
 };
