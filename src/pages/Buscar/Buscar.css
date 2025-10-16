@@ -1,0 +1,86 @@
+/* Buscar.css - inspirado en la estética de Home.css */
+/* Reutiliza variables definidas en Home.css (:root) y clases de .card.product */
+
+/* Reuse variables from Home.css (:root) */
+
+.buscar-page{
+	width:min(96vw, var(--maxw));
+	margin:24px auto 80px;
+	padding:0 12px;
+	color:var(--text);
+}
+
+.buscar-header{
+	display:flex; flex-direction:column; gap:10px; margin-bottom:18px;
+}
+
+.buscar-top{
+	display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+
+.buscar-title{
+	margin:0; font-size:clamp(18px,2.6vw,26px); font-weight:900; color:var(--text);
+}
+
+.buscar-sub{
+	color:var(--muted); font-size:14px; margin-top:4px;
+}
+
+.buscar-controls{
+	display:flex; gap:10px; align-items:center;
+}
+
+.buscar-controls .filter-chip{
+	background:var(--surface); border:1px solid rgba(255,255,255,.06);
+	padding:8px 12px; border-radius:999px; font-weight:800; color:var(--muted);
+}
+
+/* Resultados */
+.buscar-results{ margin-top:20px }
+
+.result-grid{
+	display:grid;
+	grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
+	gap: clamp(14px, 2vw, 24px);
+}
+
+/* Reutilizamos la tarjeta de producto; si necesitas ajustes específicos del grid, aplicarlos aquí */
+.result-grid .card.product{ min-height:220px }
+
+/* Empty state */
+.empty-state{
+	text-align:center; padding:40px 12px; border-radius:14px;
+	background:var(--surface); border:1px solid rgba(255,255,255,.04);
+}
+.empty-state h3{ margin:0 0 8px; font-size:20px; color:var(--text); font-weight:900 }
+.empty-state p{ margin:0; color:var(--muted) }
+
+/* Sidebar móvil / filtros compactos */
+.buscar-sidebar{
+	background:var(--surface); border:1px solid rgba(255,255,255,.04);
+	padding:12px; border-radius:12px;
+}
+
+/* Pagination */
+.buscar-pagination{ display:flex; justify-content:center; margin-top:22px; gap:8px }
+.buscar-pagination button{
+	border:1px solid rgba(255,255,255,.06); background:var(--surface-2); color:var(--text);
+	padding:8px 12px; border-radius:8px; font-weight:800; cursor:pointer;
+}
+.buscar-pagination button.active{ background:var(--brand); border-color:var(--brand); color:#fff }
+
+/* Responsive tweaks */
+@media (max-width:900px){
+	.buscar-top{ flex-direction:column; align-items:flex-start }
+	.buscar-controls{ width:100%; justify-content:space-between }
+}
+
+@media (max-width:520px){
+	.result-grid{ grid-template-columns: 1fr }
+	.buscar-top{ gap:8px }
+}
+
+/* Small helpers consistent with Home.css */
+.muted{ color:var(--muted) }
+.section-title{ margin:0; font-size:clamp(18px,2.4vw,22px); font-weight:900 }
+

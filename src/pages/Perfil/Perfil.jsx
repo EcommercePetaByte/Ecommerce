@@ -37,9 +37,10 @@ export default function Perfil() {
   };
 
   const handleLogout = () => {
-    // TODO: limpiar tokens/localStorage
-    navigate("/login");
-  };
+  localStorage.removeItem("remember_user"); // Borra el login
+  // Si tu Header usa isLoggedIn basado en localStorage, se actualizará solo
+  navigate("/"); // Redirige al Home
+};
 
   return (
     <>

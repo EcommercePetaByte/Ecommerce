@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import "./Buscar.css";
 
 export default function Buscar() {
   const location = useLocation();

@@ -1,6 +1,6 @@
 import "./Header.css";
 import Logo from "../Logo/Logo";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import {
   UserRound,
@@ -14,6 +14,10 @@ import { getCarrito } from "../../carrito.js";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem("remember_user")
+  );
   const [openCategorias, setOpenCategorias] = useState(false);
   const [openFiltros, setOpenFiltros] = useState(false);
   const categoriasRef = useRef(null);
@@ -21,7 +25,6 @@ const Header = () => {
   const [searchText, setSearchText] = useState("");
   const [cartCount, setCartCount] = useState(0);
 
-  // ====== Estado de filtros avanzados ======
   const [filters, setFilters] = useState({
     categoria: "",
     min: "",
@@ -39,7 +42,6 @@ const Header = () => {
     }));
   };
 
-  // ====== Tema (oscuro / claro) ======
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("theme");
     if (saved) return saved;
@@ -65,7 +67,6 @@ const Header = () => {
     "Sillas",
   ];
 
-  // ====== Actualizar carrito ======
   useEffect(() => {
     const actualizar = () => {
       const carrito = getCarrito();
@@ -81,7 +82,6 @@ const Header = () => {
     };
   }, []);
 
-  // ====== Cerrar dropdowns al hacer clic afuera ======
   useEffect(() => {
     const onDocClick = (e) => {
       if (!categoriasRef.current?.contains(e.target)) setOpenCategorias(false);
@@ -91,7 +91,10 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
-  // ====== Buscar ======
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("remember_user"));
+  }, [location]);
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
@@ -115,31 +118,28 @@ const Header = () => {
 
         {/* Buscador con filtros */}
         <div className="search-container" ref={filtrosRef}>
+          <form className="search" role="search" onSubmit={handleSearchSubmit}>
+            <button type="submit" className="buscar-btn" title="Buscar">
+              <Search size={18} />
+            </button>
 
-        <form className="search" role="search" onSubmit={handleSearchSubmit}>
-          <button type="submit" className="buscar-btn" title="Buscar">
-            <Search size={18} />
-          </button>
-          
-          <input
-            type="text"
-            placeholder="Buscar productos..."
-            aria-label="Buscar productos"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-        
-          <button
-            type="button"
-            className="filtros-btn"
-            onClick={() => setOpenFiltros((v) => !v)}
-            title="Filtros avanzados"
-          >
-            <SlidersHorizontal size={18} />
-          </button>
-        </form>
+            <input
+              type="text"
+              placeholder="Buscar productos..."
+              aria-label="Buscar productos"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
 
-
+            <button
+              type="button"
+              className="filtros-btn"
+              onClick={() => setOpenFiltros((v) => !v)}
+              title="Filtros avanzados"
+            >
+              <SlidersHorizontal size={18} />
+            </button>
+          </form>
 
           {openFiltros && (
             <div className="filtros-dropdown">
@@ -212,12 +212,9 @@ const Header = () => {
           )}
         </div>
 
-        {/* ICONOS */}
-        <div className="icons">
-          <Link to="/perfil" className="icon-btn" title="Perfil">
-            <UserRound size={20} />
-          </Link>
-
+        {/* ICONOS a la derecha: Carrito -> Modo Claro -> Categorías -> Perfil/Login */}
+        <div className="icons" style={{ marginLeft: "auto" }}>
+          {/* Carrito */}
           <div className="cart-icon-wrapper">
             <Link to="/carrito" className="icon-btn cart-btn" title="Carrito">
               <ShoppingCart size={22} />
@@ -225,6 +222,7 @@ const Header = () => {
             </Link>
           </div>
 
+          {/* Modo claro/oscuro */}
           <button
             className={`icon-btn foco-btn ${theme === "light" ? "on" : ""}`}
             onClick={toggleTheme}
@@ -270,13 +268,20 @@ const Header = () => {
             )}
           </div>
 
-          <button
-            className="categorias-btn login-btn"
-            onClick={() => navigate("/login")}
-            type="button"
-          >
-            Login
-          </button>
+          {/* Perfil / Login */}
+          {isLoggedIn ? (
+            <Link to="/perfil" className="icon-btn" title="Perfil">
+              <UserRound size={20} />
+            </Link>
+          ) : (
+            <button
+              className="categorias-btn login-btn"
+              onClick={() => navigate("/login")}
+              type="button"
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
     </header>

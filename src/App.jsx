@@ -131,6 +131,14 @@ function App() {
           element={<Login onLogin={handleLogin} onRegister={handleRegister} />}
         />
         <Route
+          path="/perfil"
+          element={
+            <ProtectedRoute isAuthenticated={!!localStorage.getItem("remember_user")}>
+              <Perfil />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/producto/:id"
           element={<DetalleProducto productos={products} />}
         />
