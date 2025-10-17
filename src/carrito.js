@@ -11,19 +11,19 @@ export const getCarrito = () => {
   }
 };
 
-// Guardar carrito en localStorage
+// Guardar carrito en localStorage y disparar evento global
 export const guardarCarrito = (carrito) => {
   if (!Array.isArray(carrito)) carrito = [];
   localStorage.setItem("carrito", JSON.stringify(carrito));
 
-  // Opcional: disparar evento para que otros componentes escuchen cambios
+  // Evento para que otros componentes reaccionen al cambio
   window.dispatchEvent(new Event("carritoActualizado"));
   return carrito;
 };
 
-// Agregar producto al carrito (opcional: cantidad)
+// Agregar producto al carrito (respeta cantidad)
 export const agregarAlCarrito = (producto, cantidad = 1) => {
-  if (!producto?.id) return getCarrito(); // validar id
+  if (!producto?.id) return getCarrito();
   if (cantidad <= 0) return getCarrito();
 
   const carrito = getCarrito();
@@ -38,7 +38,7 @@ export const agregarAlCarrito = (producto, cantidad = 1) => {
   return guardarCarrito(carrito);
 };
 
-// Quitar producto del carrito completamente
+// Quitar producto completamente
 export const quitarDelCarrito = (id) => {
   const carrito = getCarrito().filter((p) => p.id !== id);
   return guardarCarrito(carrito);
@@ -60,14 +60,14 @@ export const actualizarCantidad = (id, nuevaCantidad) => {
   return guardarCarrito(carrito);
 };
 
-// Vaciar carrito
+// Vaciar carrito completamente
 export const vaciarCarrito = () => {
   localStorage.removeItem("carrito");
   window.dispatchEvent(new Event("carritoActualizado"));
   return [];
 };
 
-// Calcular total
+// Calcular total del carrito
 export const calculaTotal = () => {
   return getCarrito().reduce((acc, p) => {
     const cantidad = Number(p.cantidad) || 0;

@@ -25,11 +25,16 @@ export default function DetalleProducto({ productos = [] }) {
   const producto = productos.find((p) => p.id === Number(id));
   const [chatOpen, setChatOpen] = useState(false);
 
-
-  // estado UI
   const [qty, setQty] = useState(1);
   const [envio, setEnvio] = useState("estandar"); // estandar | expres
   const [fav, setFav] = useState(false);
+
+  const handleAddToCart = () => {
+    agregarAlCarrito(producto, qty);
+    alert(`${qty} ${producto.name} agregado(s) al carrito`);
+  };
+
+
 
   if (!producto) {
     return (
@@ -46,7 +51,6 @@ export default function DetalleProducto({ productos = [] }) {
     );
   }
 
-  // ===== Helpers y datos simulados =====
   const toARS = (n) =>
     Number(n).toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
@@ -61,24 +65,23 @@ export default function DetalleProducto({ productos = [] }) {
     return d.toLocaleDateString("es-AR", { weekday: "short", day: "2-digit", month: "short" });
   }, [envio]);
 
-  const rating = 4.6; // mock
-  const reviews = 128; // mock
-  const stock = 12; // mock
+  const rating = 4.6;
+  const reviews = 128;
+  const stock = 12;
   const sku = `SKU-${String(producto.id).padStart(5, "0")}`;
 
-  // ===== Acciones =====
+  // Stepper handlers
   const inc = () => setQty((n) => Math.min(n + 1, 99));
   const dec = () => setQty((n) => Math.max(1, n - 1));
+
   const addToCart = () => {
-    agregarAlCarrito(producto);
-    // si querés respetar la cantidad seleccionada, llamá varias veces o adapta tu carrito a qty
-    alert("Producto agregado al carrito");
+    agregarAlCarrito({ ...producto, cantidad: qty });
+    alert(`Se agregaron ${qty} unidad(es) al carrito`);
   };
 
   return (
     <>
       <Header />
-
       <main className="detalle-wrap container">
         {/* Breadcrumb + volver */}
         <div className="breadcrumb">
@@ -99,7 +102,6 @@ export default function DetalleProducto({ productos = [] }) {
             </figure>
 
             <div className="thumbs">
-              {/* En real tendrías múltiples imágenes; acá repetimos la principal de ejemplo */}
               {[0, 1, 2, 3].map((i) => (
                 <button key={i} className="thumb is-active">
                   <img src={producto.img} alt={`Vista ${i + 1}`} />
@@ -136,18 +138,22 @@ export default function DetalleProducto({ productos = [] }) {
                 </div>
               )}
               <div className="price-main">{toARS(priceFinal)}</div>
-              <div className="cuotas">
-                {cuotas} cuotas de <strong>{toARS(priceFinal / cuotas)}</strong>
-              </div>
+              <div className="cuotas">{cuotas} cuotas de <strong>{toARS(priceFinal / cuotas)}</strong></div>
             </div>
 
             {/* Opciones */}
             <div className="controls">
               <div className="qty">
                 <span>Cantidad</span>
-                <div className="stepper" role="group" aria-label="Cantidad">
+                <div className="stepper horizontal" role="group" aria-label="Cantidad">
                   <button type="button" onClick={dec} aria-label="Disminuir"><Minus size={16} /></button>
-                  <input type="number" min="1" max="99" value={qty} onChange={(e) => setQty(Math.max(1, Math.min(99, Number(e.target.value) || 1)))} />
+                  <input
+                    type="number"
+                    min="1"
+                    max="99"
+                    value={qty}
+                    onChange={(e) => setQty(Math.max(1, Math.min(99, Number(e.target.value) || 1)))}
+                  />
                   <button type="button" onClick={inc} aria-label="Aumentar"><Plus size={16} /></button>
                 </div>
               </div>
@@ -161,16 +167,14 @@ export default function DetalleProducto({ productos = [] }) {
               </div>
             </div>
 
-            {/* Subtotal */}
             <div className="summary">
               <span>Subtotal</span>
               <strong>{toARS(priceFinal * qty + costoEnvio)}</strong>
             </div>
 
-            {/* CTA */}
             <div className="cta">
-              <button className="btn primary" onClick={addToCart}>Agregar al carrito</button>
-              <button className="btn ghost" onClick={() => alert("Checkout directo en construcción")}>Comprar ahora</button>
+              <button className="btn primary" onClick={handleAddToCart}>Agregar al carrito</button>
+              <button className="btn ghost" onClick={() => navigate("/carrito")}>Ir al carrito</button>
               <button className={`btn icon ${fav ? "active" : ""}`} onClick={() => setFav((v) => !v)} aria-label="Favorito">
                 <Heart size={18} />
               </button>
@@ -179,14 +183,12 @@ export default function DetalleProducto({ productos = [] }) {
               </button>
             </div>
 
-            {/* Beneficios */}
             <ul className="benefits">
               <li><Truck size={18} /> Envíos a todo el país</li>
               <li><RotateCw size={18} /> Devolución gratis 30 días</li>
               <li><ShieldCheck size={18} /> Garantía oficial 12 meses</li>
             </ul>
 
-            {/* Descripción */}
             <section className="desc">
               <h2>Descripción</h2>
               <p>
@@ -196,17 +198,14 @@ export default function DetalleProducto({ productos = [] }) {
             </section>
           </section>
         </article>
-      {/** Chatbot - botón flotante */}
+
         <button className="fab" title="Ayuda" onClick={() => setChatOpen(!chatOpen)}>
-         <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-           <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-         </svg>
-      </button>
-      
-      {chatOpen && <Chatbot />}
-      
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+          </svg>
+        </button>
+        {chatOpen && <Chatbot />}
       </main>
-      
       <Footer />
     </>
   );

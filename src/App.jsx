@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import "./theme.css";
 
@@ -13,7 +13,7 @@ import Carrito from "./pages/Carrito/Carrito";
 import Pago from "./pages/Pago/Pago";
 import Perfil from "./pages/Perfil/Perfil";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import Buscar from "./pages/Buscar/Buscar"; // ✅ Agregado
+import Buscar from "./pages/Buscar/Buscar";
 
 // Admin
 import AdminLayout from "./pages/Administrador/AdminLayout";
@@ -24,7 +24,16 @@ import Ajustes from "./pages/Administrador/Ajustes";
 import LogAdmin from "./pages/Administrador/LogAdmin";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // ✅ Inicializa autenticación leyendo el localStorage
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("remember_user")
+  );
+
+  // ✅ Sincroniza el estado si cambia localStorage (por recarga o login nuevo)
+  useEffect(() => {
+    const user = localStorage.getItem("remember_user");
+    setIsAuthenticated(!!user);
+  }, []);
 
   // ====== DATA DE EJEMPLO (60 productos) ======
   const BASE = [
@@ -106,6 +115,7 @@ function App() {
   // ✅ Login de administrador
   const handleLogin = (username, password) => {
     if (username === "admin" && password === "1234") {
+      localStorage.setItem("remember_user", username);
       setIsAuthenticated(true);
       return true;
     } else {
@@ -115,7 +125,14 @@ function App() {
 
   // ✅ Registro de usuario
   const handleRegister = (username, email, password) => {
+    localStorage.setItem("remember_user", username);
     setIsAuthenticated(true);
+  };
+
+  // ✅ Logout global
+  const handleLogout = () => {
+    localStorage.removeItem("remember_user");
+    setIsAuthenticated(false);
   };
 
   return (
@@ -124,33 +141,64 @@ function App() {
         {/* ===== Rutas públicas ===== */}
         <Route
           path="/"
-          element={<Home isAuthenticated={isAuthenticated} productos={products} />}
+          element={
+            <Home
+              isAuthenticated={isAuthenticated}
+              productos={products}
+              onLogout={handleLogout}
+            />
+          }
         />
         <Route
           path="/login"
-          element={<Login onLogin={handleLogin} onRegister={handleRegister} />}
+          element={
+            <Login
+              onLogin={handleLogin}
+              onRegister={handleRegister}
+            />
+          }
         />
+
+        {/* ===== Rutas protegidas de usuario ===== */}
         <Route
           path="/perfil"
           element={
-            <ProtectedRoute isAuthenticated={!!localStorage.getItem("remember_user")}>
-              <Perfil />
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Perfil onLogout={handleLogout} />
             </ProtectedRoute>
           }
         />
         <Route
+          path="/carrito"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Carrito productos={products} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pago"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Pago />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ===== Otras rutas ===== */}
+        <Route
           path="/producto/:id"
-          element={<DetalleProducto productos={products} />}
+          element={
+            <DetalleProducto
+              productos={products}
+              isAuthenticated={isAuthenticated}
+            />
+          }
         />
         <Route
           path="/categoria/:nombreCategoria"
           element={<Categoria productos={products} />}
         />
-        <Route path="/carrito" element={<Carrito />} />
-        <Route path="/pago" element={<Pago />} />
-        <Route path="/perfil" element={<Perfil />} />
-
-        {/* ✅ Nueva ruta: búsqueda avanzada */}
         <Route path="/buscar" element={<Buscar />} />
 
         {/* ===== Panel Admin ===== */}
@@ -158,7 +206,6 @@ function App() {
           path="/login-admin"
           element={<LogAdmin onLogin={() => setIsAuthenticated(true)} />}
         />
-
         <Route
           path="/admin/*"
           element={

@@ -12,7 +12,7 @@ import { Trash2, Tag, Truck } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import Chatbot from "../../components/Chatbot/Chatbot.jsx";
 
-// --- Componentes independientes del stepper ---
+// --- Stepper ---
 function DecreaseButton({ onClick }) {
   return (
     <button className="stepper-decrease" onClick={onClick} aria-label="Disminuir">-</button>
@@ -31,12 +31,28 @@ function IncreaseButton({ onClick }) {
 
 export default function Carrito() {
   const [productos, setProductos] = useState([]);
-  const [shipping, setShipping] = useState("estandar"); // estandar | expres
+  const [shipping, setShipping] = useState("estandar");
   const [coupon, setCoupon] = useState("");
-  const navigate = useNavigate();
   const [chatOpen, setChatOpen] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => { setProductos(getCarrito()); }, []);
+  // Carga inicial
+  useEffect(() => {
+    setProductos(getCarrito());
+  }, []);
+
+  // Actualiza carrito automáticamente si cambia en otra pestaña
+  useEffect(() => {
+    const handleStorage = () => setProductos(getCarrito());
+    const handleCustom = () => setProductos(getCarrito());
+
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("carritoActualizado", handleCustom);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("carritoActualizado", handleCustom);
+    };
+  }, []);
 
   const toARS = (n) =>
     Number(n).toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
@@ -49,25 +65,29 @@ export default function Carrito() {
   }, [productos]);
 
   const envioCosto = shipping === "expres" ? 1500 : 500;
-  const descuentoCup = coupon.trim().toUpperCase() === "PETA10" ? Math.round(subtotal * 0.10) : 0;
+  const descuentoCup = coupon.trim().toUpperCase() === "PETA10" ? Math.round(subtotal * 0.1) : 0;
   const total = Math.max(0, subtotal - descuentoCup) + (productos.length ? envioCosto : 0);
 
   // Handlers
   const refresh = () => setProductos(getCarrito());
+
   const handleVaciar = () => {
     if (window.confirm("¿Vaciar carrito?")) {
       vaciarCarrito();
       setProductos([]);
     }
   };
+
   const handleQuitar = (id) => { quitarDelCarrito(id); refresh(); };
+
   const handleSumar = (id) => {
     const p = productos.find((x) => x.id === id);
     if (p) { actualizarCantidad(id, p.cantidad + 1); refresh(); }
   };
+
   const handleRestar = (id) => {
     const p = productos.find((x) => x.id === id);
-    if (p && p.cantidad > 1) { actualizarCantidad(id, p.cantidad - 1); refresh(); }
+    if (p) { actualizarCantidad(id, p.cantidad - 1); refresh(); }
   };
 
   if (productos.length === 0) {
@@ -84,7 +104,6 @@ export default function Carrito() {
       <Header />
 
       <main className="cart-wrap">
-        {/* Encabezado */}
         <div className="cart-head">
           <h1>Tu carrito</h1>
           <span className="muted">{items} {items === 1 ? "item" : "items"}</span>
@@ -103,7 +122,7 @@ export default function Carrito() {
                   </div>
 
                   <div className="controls">
-                    <div className="stepper">
+                    <div className="stepper horizontal">
                       <DecreaseButton onClick={() => handleRestar(p.id)} />
                       <Quantity value={p.cantidad} />
                       <IncreaseButton onClick={() => handleSumar(p.id)} />
@@ -115,9 +134,7 @@ export default function Carrito() {
                   </div>
                 </div>
 
-                <div className="line-subtotal">
-                  {toARS(p.price * p.cantidad)}
-                </div>
+                <div className="line-subtotal">{toARS(p.price * p.cantidad)}</div>
               </article>
             ))}
 
@@ -167,7 +184,11 @@ export default function Carrito() {
               <strong>{toARS(total)}</strong>
             </div>
 
-            <button className="btn primary block" onClick={() => navigate("/pago")}>
+            <button
+              className="btn primary block"
+              onClick={() => navigate("/pago")}
+              disabled={productos.length === 0}
+            >
               Finalizar compra
             </button>
 
@@ -176,7 +197,8 @@ export default function Carrito() {
             </p>
           </aside>
         </section>
-        {/** Chatbot - botón flotante */}
+
+        {/* Chatbot */}
         <button className="fab" title="Ayuda" onClick={() => setChatOpen(!chatOpen)}>
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
             <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />

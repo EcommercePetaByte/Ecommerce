@@ -7,7 +7,7 @@ import "./Login.css";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Decodifica el JWT del SDK de Google para obtener el perfil
+// 🔹 Decodifica el JWT de Google
 function decodeJwt(jwt) {
   try {
     const base64Url = jwt.split(".")[1];
@@ -41,8 +41,8 @@ const Login = ({ onLogin, onRegister }) => {
   const googleDivRef = useRef(null);
   const [gisReady, setGisReady] = useState(false);
 
+  // 🔹 Cargar SDK de Google
   useEffect(() => {
-    // Carga dinámica del SDK de Google Identity Services
     const scriptId = "google-identity-services";
     if (document.getElementById(scriptId)) {
       setGisReady(true);
@@ -58,25 +58,22 @@ const Login = ({ onLogin, onRegister }) => {
     document.head.appendChild(s);
   }, []);
 
+  // 🔹 Inicializar Google Sign-In
   useEffect(() => {
     if (!gisReady || !googleDivRef.current) return;
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    if (!clientId) return; // si no hay client id, no renderizamos botón oficial
+    if (!clientId) return;
 
-    // Inicializa y renderiza el botón oficial de Google
-    /* global google */
     window.google?.accounts.id.initialize({
       client_id: clientId,
       callback: (response) => {
         const payload = decodeJwt(response.credential);
         if (!payload?.email) return;
-        // Podés llamar a tu backend acá con "response.credential"
-        // En modo demo: lo tratamos como login correcto
         localStorage.setItem("remember_user", payload.email);
+        localStorage.setItem("isAuthenticated", "true");
         onRegister?.(payload.name || payload.email, payload.email, "oauth_google");
         navigate("/");
       },
-      auto_select: false,
       ux_mode: "popup",
     });
 
@@ -90,7 +87,10 @@ const Login = ({ onLogin, onRegister }) => {
     });
   }, [gisReady, navigate, onRegister]);
 
-  useEffect(() => { if (error) setError(""); }, [username, email, password, isRegister]);
+  // 🔹 Limpia errores si cambia input
+  useEffect(() => {
+    if (error) setError("");
+  }, [username, email, password, isRegister]);
 
   const validate = () => {
     if (!username.trim()) return "Ingresá tu usuario.";
@@ -106,31 +106,41 @@ const Login = ({ onLogin, onRegister }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const msg = validate();
-    if (msg) { setError(msg); return; }
+    if (msg) {
+      setError(msg);
+      return;
+    }
 
     try {
       setLoading(true);
+
       if (remember) localStorage.setItem("remember_user", username);
       else localStorage.removeItem("remember_user");
 
       if (isRegister) {
         onRegister?.(username, email, password);
+        localStorage.setItem("isAuthenticated", "true");
         navigate("/");
       } else {
         const ok = onLogin?.(username, password);
-        if (ok) navigate("/");
-        else setError("Usuario o contraseña incorrectos.");
+        if (ok) {
+          localStorage.setItem("isAuthenticated", "true");
+          localStorage.setItem("remember_user", username);
+          navigate("/");
+        } else {
+          setError("Usuario o contraseña incorrectos.");
+        }
       }
     } finally {
       setLoading(false);
     }
   };
 
-  // Fallback: botón custom si no hay client id o no cargó GIS
+  // 🔹 Fallback: botón custom si no hay client ID
   const handleGoogleFallback = () => {
-    // Demo: simulamos login Google sin backend
     const alias = "usuario.google@example.com";
     localStorage.setItem("remember_user", alias);
+    localStorage.setItem("isAuthenticated", "true");
     onRegister?.("Usuario Google", alias, "oauth_google");
     navigate("/");
   };
@@ -162,10 +172,7 @@ const Login = ({ onLogin, onRegister }) => {
               )}
             </div>
           </div>
-
-          <div className="oauth-divider">
-            <span>o</span>
-          </div>
+          <div className="oauth-divider"><span>o</span></div>
         </div>
 
         {/* ------- Form tradicional ------- */}
@@ -230,7 +237,11 @@ const Login = ({ onLogin, onRegister }) => {
                 <span>Recordarme</span>
               </label>
 
-              <button type="button" className="link-ghost" onClick={() => alert("Funcionalidad en construcción")}>
+              <button
+                type="button"
+                className="link-ghost"
+                onClick={() => alert("Funcionalidad en construcción")}
+              >
                 ¿Olvidaste tu contraseña?
               </button>
             </div>
