@@ -1,20 +1,53 @@
-import React, { useState } from "react";
-import {useNavigate} from "react-router-dom"
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { initMercadoPago } from "@mercadopago/sdk-react";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import "./Pago.css";
 
 export default function Pago() {
-  const [metodo, setMetodo] = useState("tarjeta"); // tarjeta | qr
-  const navigate = useNavigate();
+  const [metodo, setMetodo] = useState("tarjeta"); // "tarjeta" o "qr"
   const [chatOpen, setChatOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleCancelar = () =>{
-    navigate("/carrito")
+  // ✅ Inicializar Mercado Pago una sola vez
+  useEffect(() => {
+    // ⚠️ Reemplazá esta clave por tu PUBLIC KEY de modo sandbox desde developers.mercadopago.com
+    initMercadoPago("APP_USR-66bc612d-6ad0-4aa8-8393-7b3a415af55d");
+  }, []);
+
+  //  Botón para volver al carrito
+  const handleCancelar = () => {
+    navigate("/carrito");
   };
 
+  //  Simulación de pago con tarjeta (no real)
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Pago procesado correctamente ✅");
+    alert("Pago procesado correctamente ✅ (simulado)");
+  };
+
+  //  Pago real con Mercado Pago
+  const handleMercadoPago = async () => {
+    try {
+      // Enviamos los datos del producto al backend
+      const res = await axios.post("http://localhost:8080/api/payments/create", {
+        title: "Compra Ecommerce Gian",
+        quantity: 1,
+        price: 5000, // Podés reemplazar esto con el total real del carrito
+      });
+
+      // Si Mercado Pago devuelve la URL de pago, redirigimos al checkout
+      if (res.data.init_point) {
+        window.location.href = res.data.init_point;
+      } else {
+        console.error("Error al crear la preferencia:", res.data);
+        alert("No se pudo crear la preferencia de pago.");
+      }
+    } catch (error) {
+      console.error("Error al procesar el pago:", error);
+      alert("Ocurrió un error al conectar con el servidor.");
+    }
   };
 
   return (
@@ -37,6 +70,7 @@ export default function Pago() {
           </button>
         </div>
 
+        {/* Pago con tarjeta (formulario simulado) */}
         {metodo === "tarjeta" && (
           <form className="pago-form" onSubmit={handleSubmit}>
             <label>
@@ -61,7 +95,11 @@ export default function Pago() {
             </label>
 
             <div className="pago-acciones">
-              <button type="button" className="btn-cancelar" onClick={handleCancelar}>
+              <button
+                type="button"
+                className="btn-cancelar"
+                onClick={handleCancelar}
+              >
                 Cancelar
               </button>
               <button type="submit" className="pagar-btn">
@@ -71,26 +109,39 @@ export default function Pago() {
           </form>
         )}
 
+        {/* Pago real con Mercado Pago */}
         {metodo === "qr" && (
           <div className="pago-qr">
-            <h2>Escanea el QR con tu app de Mercado Pago</h2>
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/8/89/QR_code_Billboard.png"
-              alt="QR Mercado Pago"
-            />
+            <h2>Pagar con Mercado Pago (Sandbox)</h2>
+            <p>Simulá tu pago de forma segura con tu cuenta de prueba</p>
+
+            <button className="pagar-btn" onClick={handleMercadoPago}>
+              Ir al checkout de Mercado Pago
+            </button>
+
             <button className="volver-btn" onClick={() => setMetodo("tarjeta")}>
               Volver a Tarjeta
             </button>
           </div>
         )}
-         {/** Chatbot - botón flotante */}
-         <button className="fab" title="Ayuda" onClick={() => setChatOpen(!chatOpen)}>
+
+        {/* Chatbot - botón flotante */}
+        <button
+          className="fab"
+          title="Ayuda"
+          onClick={() => setChatOpen(!chatOpen)}
+        >
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-            <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+            <path
+              d="M4 5h16v10H7l-3 3V5Z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
           </svg>
-         </button>
-         
-         {chatOpen && <Chatbot />}
+        </button>
+
+        {chatOpen && <Chatbot />}
       </main>
     </div>
   );
