@@ -15,9 +15,7 @@ import { getCarrito } from "../../carrito.js";
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem("remember_user")
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("jwtToken"));
   const [openCategorias, setOpenCategorias] = useState(false);
   const [openFiltros, setOpenFiltros] = useState(false);
   const categoriasRef = useRef(null);
@@ -92,7 +90,7 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem("remember_user"));
+    setIsLoggedIn(!!localStorage.getItem("jwtToken"));
   }, [location]);
 
   const handleSearchSubmit = (e) => {

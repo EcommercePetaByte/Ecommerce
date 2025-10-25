@@ -8,16 +8,19 @@ export default function Pago() {
   const [carrito, setCarrito] = useState([]);
   const navigate = useNavigate();
 
-  // Inicializar Mercado Pago y cargar carrito
+  // 🔹 Redirige a login si no está autenticado
   useEffect(() => {
-    initMercadoPago("APP_USR-66bc612d-6ad0-4aa8-8393-7b3a415af55d"); 
+    const token = localStorage.getItem("jwtToken");
+    if (!token) navigate("/login");
+  }, [navigate]);
+
+  useEffect(() => {
+    initMercadoPago("APP_USR-66bc612d-6ad0-4aa8-8393-7b3a415af55d");
     const savedCart = JSON.parse(localStorage.getItem("carrito")) || [];
     setCarrito(savedCart);
   }, []);
 
-  const handleCancelar = () => {
-    navigate("/carrito");
-  };
+  const handleCancelar = () => navigate("/carrito");
 
   const handleMercadoPago = async () => {
     if (!carrito || carrito.length === 0) {
@@ -25,7 +28,6 @@ export default function Pago() {
       return;
     }
 
-    // Filtrar items válidos
     const validItems = carrito
       .filter((p) => p.cantidad > 0 && p.price != null)
       .map((p) => ({
@@ -40,13 +42,24 @@ export default function Pago() {
     }
 
     try {
+      const token = localStorage.getItem("jwtToken");
+      if (!token) {
+        alert("Debes iniciar sesión para continuar con el pago.");
+        navigate("/login");
+        return;
+      }
+
       const res = await axios.post(
         "http://localhost:8080/api/payments/create",
-        { items: validItems }
+        { items: validItems },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       if (res.data.init_point) {
-        // Redirigir al checkout de Mercado Pago
         window.location.href = res.data.init_point;
       } else if (res.data.error) {
         console.error("Error al crear la preferencia:", res.data.error);
@@ -57,7 +70,12 @@ export default function Pago() {
       }
     } catch (error) {
       console.error("Error al procesar el pago:", error);
-      alert("Ocurrió un error al conectar con el servidor.");
+      if (error.response?.status === 401) {
+        alert("Tu sesión ha expirado. Inicia sesión nuevamente.");
+        navigate("/login");
+      } else {
+        alert("Ocurrió un error al conectar con el servidor.");
+      }
     }
   };
 
@@ -79,7 +97,6 @@ export default function Pago() {
           </button>
         </div>
 
-        {/* Botón flotante para abrir el chat externo */}
         <button
           className="fab"
           title="Ayuda"

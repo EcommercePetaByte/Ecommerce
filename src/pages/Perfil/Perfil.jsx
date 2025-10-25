@@ -12,10 +12,9 @@ import {
 } from "lucide-react";
 import "./Perfil.css";
 
-export default function Perfil() {
+export default function Perfil({ onLogout }) {
   const navigate = useNavigate();
 
-  // Mock de datos del usuario (podés traerlos del backend)
   const [form, setForm] = useState({
     nombre: "Nombre Apellido",
     email: "usuario@correo.com",
@@ -37,17 +36,15 @@ export default function Perfil() {
   };
 
   const handleLogout = () => {
-  localStorage.removeItem("remember_user"); // Borra el login
-  // Si tu Header usa isLoggedIn basado en localStorage, se actualizará solo
-  navigate("/"); // Redirige al Home
-};
+    onLogout?.();
+    navigate("/");
+  };
 
   return (
     <>
       <Header />
 
       <main className="perfil container">
-        {/* Header */}
         <header className="perfil-head">
           <div className="perfil-title">
             <h1>Tu perfil</h1>
@@ -68,7 +65,6 @@ export default function Perfil() {
         </header>
 
         <section className="perfil-grid">
-          {/* Sidebar */}
           <aside className="perfil-aside card">
             <div className="avatar-wrap" aria-label="Avatar del usuario">
               <div className="avatar-ring">
@@ -116,7 +112,6 @@ export default function Perfil() {
             </div>
           </aside>
 
-          {/* Información / Form */}
           <section className="perfil-main card">
             <div className="main-head">
               <h2>Información del perfil</h2>
@@ -200,7 +195,6 @@ export default function Perfil() {
               </label>
             </form>
 
-            {/* Bloque secundario: dirección o seguridad */}
             <div className="subcards">
               <div className="subcard">
                 <h3>Direcciones</h3>

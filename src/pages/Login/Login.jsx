@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout.jsx";
 import Logo from "../../components/Logo/Logo";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import axios from "axios";
 import "./Login.css";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// 🔹 Decodifica el JWT de Google
 function decodeJwt(jwt) {
   try {
     const base64Url = jwt.split(".")[1];
@@ -24,14 +24,12 @@ function decodeJwt(jwt) {
   }
 }
 
-const Login = ({ onLogin, onRegister }) => {
+const Login = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
-
   const [username, setUsername] = useState(() => localStorage.getItem("remember_user") || "");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [showPass, setShowPass] = useState(false);
   const [remember, setRemember] = useState(!!localStorage.getItem("remember_user"));
   const [error, setError] = useState("");
@@ -41,7 +39,6 @@ const Login = ({ onLogin, onRegister }) => {
   const googleDivRef = useRef(null);
   const [gisReady, setGisReady] = useState(false);
 
-  // 🔹 Cargar SDK de Google
   useEffect(() => {
     const scriptId = "google-identity-services";
     if (document.getElementById(scriptId)) {
@@ -58,7 +55,6 @@ const Login = ({ onLogin, onRegister }) => {
     document.head.appendChild(s);
   }, []);
 
-  // 🔹 Inicializar Google Sign-In
   useEffect(() => {
     if (!gisReady || !googleDivRef.current) return;
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -66,13 +62,28 @@ const Login = ({ onLogin, onRegister }) => {
 
     window.google?.accounts.id.initialize({
       client_id: clientId,
-      callback: (response) => {
+      callback: async (response) => {
         const payload = decodeJwt(response.credential);
         if (!payload?.email) return;
-        localStorage.setItem("remember_user", payload.email);
-        localStorage.setItem("isAuthenticated", "true");
-        onRegister?.(payload.name || payload.email, payload.email, "oauth_google");
-        navigate("/");
+
+        try {
+          const res = await axios.post("http://localhost:8080/api/auth/google", {
+            email: payload.email,
+            username: payload.name || payload.email.split("@")[0],
+          });
+
+          const jwt = res.data?.token;
+          if (!jwt) throw new Error("No se recibió token del backend");
+
+          localStorage.setItem("jwtToken", jwt);
+          localStorage.setItem("remember_user", payload.email);
+          localStorage.setItem("isAuthenticated", "true");
+          setIsAuthenticated(true);
+          navigate("/");
+        } catch (err) {
+          console.error("Error login Google:", err);
+          setError("Error al iniciar sesión con Google");
+        }
       },
       ux_mode: "popup",
     });
@@ -85,9 +96,8 @@ const Login = ({ onLogin, onRegister }) => {
       logo_alignment: "left",
       width: "100",
     });
-  }, [gisReady, navigate, onRegister]);
+  }, [gisReady, navigate, setIsAuthenticated]);
 
-  // 🔹 Limpia errores si cambia input
   useEffect(() => {
     if (error) setError("");
   }, [username, email, password, isRegister]);
@@ -118,31 +128,39 @@ const Login = ({ onLogin, onRegister }) => {
       else localStorage.removeItem("remember_user");
 
       if (isRegister) {
-        onRegister?.(username, email, password);
-        localStorage.setItem("isAuthenticated", "true");
-        navigate("/");
-      } else {
-        const ok = onLogin?.(username, password);
-        if (ok) {
+        const res = await axios.post("http://localhost:8080/api/auth/register", {
+          username,
+          email,
+          password,
+        });
+        const jwt = res.data?.token;
+        if (jwt) {
+          localStorage.setItem("jwtToken", jwt);
           localStorage.setItem("isAuthenticated", "true");
-          localStorage.setItem("remember_user", username);
+          setIsAuthenticated(true);
+          navigate("/");
+        }
+      } else {
+        const res = await axios.post("http://localhost:8080/api/auth/login", {
+          username,
+          password,
+        });
+        const jwt = res.data?.token;
+        if (jwt) {
+          localStorage.setItem("jwtToken", jwt);
+          localStorage.setItem("isAuthenticated", "true");
+          setIsAuthenticated(true);
           navigate("/");
         } else {
           setError("Usuario o contraseña incorrectos.");
         }
       }
+    } catch (err) {
+      console.error(err);
+      setError("Ocurrió un error al conectarse al servidor.");
     } finally {
       setLoading(false);
     }
-  };
-
-  // 🔹 Fallback: botón custom si no hay client ID
-  const handleGoogleFallback = () => {
-    const alias = "usuario.google@example.com";
-    localStorage.setItem("remember_user", alias);
-    localStorage.setItem("isAuthenticated", "true");
-    onRegister?.("Usuario Google", alias, "oauth_google");
-    navigate("/");
   };
 
   return (
@@ -153,20 +171,13 @@ const Login = ({ onLogin, onRegister }) => {
 
         {error && <div className="alert">{error}</div>}
 
-        {/* ------- OAuth Google ------- */}
         <div className="oauth-block">
           <div className="oauth-grid">
             <div className="oauth-provider">
               {import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
                 <div ref={googleDivRef} className="google-btn-portal" />
               ) : (
-                <button className="oauth-fallback" onClick={handleGoogleFallback}>
-                  <svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true">
-                    <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.4l6.8-6.8C35.8 2.2 30.2 0 24 0 14.6 0 6.4 5.4 2.5 13.2l7.9 6.1C12.6 13.5 17.8 9.5 24 9.5z"/>
-                    <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-2.8-.4-4.1H24v8.1h12.7c-.6 3.4-2.7 6.3-5.8 8.2l9 7c5.3-4.9 6.6-12.1 6.6-19.2z"/>
-                    <path fill="#FBBC05" d="M10.4 28.3c-1-3-1-6.2 0-9.2l-7.9-6.1C.9 16.6 0 20.2 0 24c0 3.7.9 7.4 2.6 10.9l7.8-6.6z"/>
-                    <path fill="#34A853" d="M24 48c6.5 0 12-2.1 16-5.8l-9-7c-2.5 1.6-5.9 2.6-7 2.6-6.2 0-11.4-4-13.6-9.7l-7.9 6.1C6.4 42.6 14.6 48 24 48z"/>
-                  </svg>
+                <button className="oauth-fallback">
                   Continuar con Google
                 </button>
               )}
@@ -175,7 +186,6 @@ const Login = ({ onLogin, onRegister }) => {
           <div className="oauth-divider"><span>o</span></div>
         </div>
 
-        {/* ------- Form tradicional ------- */}
         <form className="login-form" onSubmit={handleSubmit} noValidate>
           <div className="form-group">
             <label htmlFor="username">Usuario</label>
@@ -236,14 +246,6 @@ const Login = ({ onLogin, onRegister }) => {
                 />
                 <span>Recordarme</span>
               </label>
-
-              <button
-                type="button"
-                className="link-ghost"
-                onClick={() => alert("Funcionalidad en construcción")}
-              >
-                ¿Olvidaste tu contraseña?
-              </button>
             </div>
           )}
 

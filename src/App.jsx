@@ -3,6 +3,7 @@ import "./App.css";
 import "./theme.css";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import axios from "axios";
 
 // Páginas del usuario
 import Home from "./pages/Home/Home";
@@ -24,15 +25,12 @@ import Ajustes from "./pages/Administrador/Ajustes";
 import LogAdmin from "./pages/Administrador/LogAdmin";
 
 function App() {
-  // Estado de autenticación global
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem("remember_user")
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Sincronizar autenticación al cargar la app
+  // Revisar token al cargar la app
   useEffect(() => {
-    const user = localStorage.getItem("remember_user");
-    setIsAuthenticated(!!user);
+    const token = localStorage.getItem("jwtToken");
+    setIsAuthenticated(!!token);
   }, []);
 
   // ====== DATA DE EJEMPLO ======
@@ -49,7 +47,6 @@ function App() {
       img: "https://redragon.es/content/uploads/2022/04/5-ESTILO-Y-ROBUSTEZ.jpg",
       categoria: "audio",
     },
-    // ... más productos
   ];
 
   const products = useMemo(() => {
@@ -65,25 +62,50 @@ function App() {
     });
   }, []);
 
-  // Login de administrador
-  const handleLogin = (username, password) => {
-    if (username === "admin" && password === "1234") {
-      localStorage.setItem("remember_user", username);
-      setIsAuthenticated(true);
-      return true;
-    } else {
-      return false;
+  // Login de usuario (backend real)
+  const handleLogin = async (username, password) => {
+    try {
+      const res = await axios.post("http://localhost:8080/api/auth/login", {
+        username,
+        password,
+      });
+
+      const data = res.data;
+      if (data?.token) {
+        localStorage.setItem("jwtToken", data.token);
+        setIsAuthenticated(true);
+        return data;
+      } else {
+        return null;
+      }
+    } catch (err) {
+      console.error("Error login:", err);
+      return null;
     }
   };
 
-  // Registro de usuario
-  const handleRegister = (username, email, password) => {
-    localStorage.setItem("remember_user", username);
-    setIsAuthenticated(true);
+  // Registro de usuario (backend real)
+  const handleRegister = async (username, email, password) => {
+    try {
+      const res = await axios.post("http://localhost:8080/api/auth/register", {
+        username,
+        email,
+        password,
+      });
+
+      if (res.status !== 201) throw new Error("Error al registrar usuario");
+
+      // Hacemos login automático
+      return await handleLogin(username, password);
+    } catch (err) {
+      console.error("Error register:", err);
+      return null;
+    }
   };
 
   // Logout global
   const handleLogout = () => {
+    localStorage.removeItem("jwtToken");
     localStorage.removeItem("remember_user");
     setIsAuthenticated(false);
   };
@@ -104,7 +126,7 @@ function App() {
         />
         <Route
           path="/login"
-          element={<Login onLogin={handleLogin} onRegister={handleRegister} />}
+          element={<Login setIsAuthenticated={setIsAuthenticated} />}
         />
 
         {/* ===== Rutas protegidas de usuario ===== */}

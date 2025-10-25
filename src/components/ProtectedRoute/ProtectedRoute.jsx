@@ -1,9 +1,9 @@
 import { Navigate } from "react-router-dom";
 
-// ProtectedRoute para admin
-export default function ProtectedRoute({ isAuthenticated, children }) {
+// ProtectedRoute para admin o usuario
+export default function ProtectedRoute({ isAuthenticated, children, admin = false }) {
   if (!isAuthenticated) {
-    return <Navigate to="/login-admin" replace />; // ruta del login admin
+    return <Navigate to={admin ? "/login-admin" : "/login"} replace />;
   }
   return children;
 }

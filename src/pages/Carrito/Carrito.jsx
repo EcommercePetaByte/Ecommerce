@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import Header from "../../components/Header/Header.jsx";
 import {
   getCarrito,
@@ -9,13 +10,9 @@ import {
 import EmptyCart from "./Carrito_Vacio.jsx";
 import "./Carrito.css";
 import { Trash2, Tag, Truck } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
 
-// --- Stepper ---
 function DecreaseButton({ onClick }) {
-  return (
-    <button className="stepper-decrease" onClick={onClick} aria-label="Disminuir">-</button>
-  );
+  return <button className="stepper-decrease" onClick={onClick} aria-label="Disminuir">-</button>;
 }
 
 function Quantity({ value }) {
@@ -23,9 +20,7 @@ function Quantity({ value }) {
 }
 
 function IncreaseButton({ onClick }) {
-  return (
-    <button className="stepper-increase" onClick={onClick} aria-label="Aumentar">+</button>
-  );
+  return <button className="stepper-increase" onClick={onClick} aria-label="Aumentar">+</button>;
 }
 
 export default function Carrito() {
@@ -34,7 +29,13 @@ export default function Carrito() {
   const [coupon, setCoupon] = useState("");
   const navigate = useNavigate();
 
-  // Carga inicial
+  // 🔹 Redirige a login si no está autenticado
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    if (!token) navigate("/login");
+  }, [navigate]);
+
+  // Carga inicial del carrito
   useEffect(() => {
     setProductos(getCarrito());
   }, []);
@@ -55,18 +56,16 @@ export default function Carrito() {
   const toARS = (n) =>
     Number(n).toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
-  // Totales
   const { items, subtotal } = useMemo(() => {
     const items = productos.reduce((a, p) => a + p.cantidad, 0);
     const subtotal = productos.reduce((a, p) => a + p.price * p.cantidad, 0);
     return { items, subtotal };
   }, [productos]);
 
-  const envioCosto = shipping === "expres" ? 1500 : 500;
+  const envioCosto = productos.length ? (shipping === "expres" ? 1500 : 500) : 0;
   const descuentoCup = coupon.trim().toUpperCase() === "PETA10" ? Math.round(subtotal * 0.1) : 0;
-  const total = Math.max(0, subtotal - descuentoCup) + (productos.length ? envioCosto : 0);
+  const total = Math.max(0, subtotal - descuentoCup) + envioCosto;
 
-  // Handlers
   const refresh = () => setProductos(getCarrito());
 
   const handleVaciar = () => {
@@ -77,15 +76,13 @@ export default function Carrito() {
   };
 
   const handleQuitar = (id) => { quitarDelCarrito(id); refresh(); };
-
   const handleSumar = (id) => {
     const p = productos.find((x) => x.id === id);
     if (p) { actualizarCantidad(id, p.cantidad + 1); refresh(); }
   };
-
   const handleRestar = (id) => {
     const p = productos.find((x) => x.id === id);
-    if (p) { actualizarCantidad(id, p.cantidad - 1); refresh(); }
+    if (p && p.cantidad > 1) { actualizarCantidad(id, p.cantidad - 1); refresh(); }
   };
 
   if (productos.length === 0) {
@@ -108,7 +105,6 @@ export default function Carrito() {
         </div>
 
         <section className="cart-grid">
-          {/* Lista */}
           <div className="cart-list">
             {productos.map((p) => (
               <article key={p.id} className="line">
@@ -142,7 +138,6 @@ export default function Carrito() {
             </div>
           </div>
 
-          {/* Resumen */}
           <aside className="cart-summary">
             <h2>Resumen</h2>
 
@@ -196,27 +191,26 @@ export default function Carrito() {
           </aside>
         </section>
 
-        {/* Chatbot */}
         <button
-  className="fab"
-  title="Ayuda"
-  onClick={() =>
-    window.open(
-      "https://agent.jotform.com/0199ee22e3507441ae60ecc8dc3dde4c9ec2",
-      "_blank",
-      "noopener,noreferrer"
-    )
-  }
->
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-    <path
-      d="M4 5h16v10H7l-3 3V5Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinejoin="round"
-    />
-  </svg>
-</button>
+          className="fab"
+          title="Ayuda"
+          onClick={() =>
+            window.open(
+              "https://agent.jotform.com/0199ee22e3507441ae60ecc8dc3dde4c9ec2",
+              "_blank",
+              "noopener,noreferrer"
+            )
+          }
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 5h16v10H7l-3 3V5Z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
       </main>
     </div>
   );
