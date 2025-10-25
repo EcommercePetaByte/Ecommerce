@@ -10,7 +10,6 @@ import EmptyCart from "./Carrito_Vacio.jsx";
 import "./Carrito.css";
 import { Trash2, Tag, Truck } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import Chatbot from "../../components/Chatbot/Chatbot.jsx";
 
 // --- Stepper ---
 function DecreaseButton({ onClick }) {
@@ -33,7 +32,6 @@ export default function Carrito() {
   const [productos, setProductos] = useState([]);
   const [shipping, setShipping] = useState("estandar");
   const [coupon, setCoupon] = useState("");
-  const [chatOpen, setChatOpen] = useState(false);
   const navigate = useNavigate();
 
   // Carga inicial
@@ -199,13 +197,26 @@ export default function Carrito() {
         </section>
 
         {/* Chatbot */}
-        <button className="fab" title="Ayuda" onClick={() => setChatOpen(!chatOpen)}>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-            <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-          </svg>
-        </button>
-
-        {chatOpen && <Chatbot />}
+        <button
+  className="fab"
+  title="Ayuda"
+  onClick={() =>
+    window.open(
+      "https://agent.jotform.com/0199ee22e3507441ae60ecc8dc3dde4c9ec2",
+      "_blank",
+      "noopener,noreferrer"
+    )
+  }
+>
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+    <path
+      d="M4 5h16v10H7l-3 3V5Z"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinejoin="round"
+    />
+  </svg>
+</button>
       </main>
     </div>
   );

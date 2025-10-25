@@ -1,7 +1,19 @@
 import { useState } from "react";
+import "./AdminLayout.css";
 
 export default function Productos() {
-  const [form, setForm] = useState({ nombre: "", categoria: "", precio: "", desc: "" });
+  const [form, setForm] = useState({
+    nombre: "",
+    categoria: "",
+    precio: "",
+    desc: "",
+    descuento: 0,
+    envioGratis: false,
+    img: "",
+    file: null,
+  });
+
+  const [imgPreview, setImgPreview] = useState("");
 
   const productos = [
     { id: 1, nombre: "Teclado RGB", categoria: "periféricos", precio: 45999, stock: 34 },
@@ -9,7 +21,30 @@ export default function Productos() {
     { id: 3, nombre: "Monitor 27”", categoria: "monitores", precio: 219999, stock: 6 },
   ];
 
-  const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const onChange = (e) => {
+    const { name, value, type, checked, files } = e.target;
+
+    if (name === "file" && files && files[0]) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImgPreview(event.target.result);
+        setForm((prev) => ({ ...prev, img: event.target.result, file }));
+      };
+      reader.readAsDataURL(file);
+    } else if (type === "checkbox") {
+      setForm((prev) => ({ ...prev, [name]: checked }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+      if (name === "img") setImgPreview(value);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Producto a guardar:", form);
+    alert("Producto guardado (revisar consola).");
+  };
 
   return (
     <>
@@ -54,7 +89,7 @@ export default function Productos() {
           <h3 className="panel-title">Cargar / Editar producto</h3>
         </div>
 
-        <div className="form-grid">
+        <form className="form-grid" onSubmit={handleSubmit}>
           <div className="form-field">
             <label>Nombre</label>
             <input name="nombre" value={form.nombre} onChange={onChange} placeholder="Ej. Mouse gamer" />
@@ -78,25 +113,45 @@ export default function Productos() {
             <input name="precio" type="number" value={form.precio} onChange={onChange} placeholder="0" />
           </div>
 
+          <div className="form-field">
+            <label>Descuento (%)</label>
+            <input name="descuento" type="number" value={form.descuento} onChange={onChange} placeholder="0" />
+          </div>
+
+          <div className="form-field">
+            <label>
+              <input type="checkbox" name="envioGratis" checked={form.envioGratis} onChange={onChange} /> Envío gratis
+            </label>
+          </div>
+
           <div className="form-field" style={{ gridColumn: "1 / -1" }}>
             <label>Descripción</label>
             <textarea name="desc" value={form.desc} onChange={onChange} placeholder="Características, materiales, compatibilidad…" />
           </div>
 
           <div className="form-field" style={{ gridColumn: "1 / -1" }}>
-            <label>Imágenes</label>
-            <div className="uploader">
-              <p>Arrastrá y soltá archivos aquí<br/>o <b>hacé click</b> para seleccionar</p>
-            </div>
+            <label>Imagen URL</label>
+            <input name="img" value={form.img} onChange={onChange} placeholder="https://ejemplo.com/imagen.jpg" />
           </div>
-        </div>
 
-        <div style={{ display:"flex", gap:8, marginTop:12 }}>
-          <button className="btn-ghost">Descartar</button>
-          <button className="btn-primary">Guardar</button>
-        </div>
+          <div className="form-field" style={{ gridColumn: "1 / -1" }}>
+            <label>O subí un archivo</label>
+            <input type="file" name="file" accept="image/*" onChange={onChange} />
+          </div>
+
+          {imgPreview && (
+            <div className="img-preview" style={{ gridColumn: "1 / -1" }}>
+              <p>Preview de imagen:</p>
+              <img src={imgPreview} alt="Preview" style={{ maxWidth: "200px", borderRadius: "6px" }} />
+            </div>
+          )}
+
+          <div style={{ display:"flex", gap:8, marginTop:12, gridColumn: "1 / -1" }}>
+            <button type="button" className="btn-ghost">Descartar</button>
+            <button type="submit" className="btn-primary">Guardar</button>
+          </div>
+        </form>
       </section>
     </>
   );
 }
-

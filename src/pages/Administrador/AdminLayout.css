@@ -68,3 +68,122 @@
   padding: 2rem;
   background: #0b1c23;
 }
+
+/* Paneles internos */
+.panel {
+  background: #102b36;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.panel-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+/* Tabla de productos */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.table th, .table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  text-align: left;
+}
+.table th {
+  font-weight: bold;
+}
+.table td button {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #2bb6ff;
+  color: #2bb6ff;
+  font-weight: bold;
+}
+.btn-ghost:hover {
+  background: #2bb6ff;
+  color: black;
+}
+.btn-primary {
+  background: #2bb6ff;
+  color: black;
+  font-weight: bold;
+}
+.btn-primary:hover {
+  background: #1fa2e6;
+}
+
+/* Formulario productos */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem 1.5rem;
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+.form-field label {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+.form-field input[type="text"],
+.form-field input[type="number"],
+.form-field select,
+.form-field textarea,
+.form-field input[type="file"] {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: #0b1c23;
+  color: white;
+  outline: none;
+}
+.form-field input[type="file"] {
+  cursor: pointer;
+}
+.form-field textarea {
+  resize: vertical;
+}
+
+/* Checkbox envío gratis */
+.form-field input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+  accent-color: #2bb6ff;
+}
+
+/* Imagen preview */
+.img-preview {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.img-preview img {
+  max-width: 200px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Botones finales */
+.form-grid > div + div {
+  margin-top: 0.5rem;
+}

@@ -3,7 +3,6 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import { agregarAlCarrito } from "../../carrito";
-import Chatbot from "../../components/Chatbot/Chatbot";
 
 import {
   ChevronLeft,
@@ -23,7 +22,6 @@ export default function DetalleProducto({ productos = [] }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const producto = productos.find((p) => p.id === Number(id));
-  const [chatOpen, setChatOpen] = useState(false);
 
   const [qty, setQty] = useState(1);
   const [envio, setEnvio] = useState("estandar"); // estandar | expres
@@ -199,12 +197,26 @@ export default function DetalleProducto({ productos = [] }) {
           </section>
         </article>
 
-        <button className="fab" title="Ayuda" onClick={() => setChatOpen(!chatOpen)}>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-            <path d="M4 5h16v10H7l-3 3V5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-          </svg>
-        </button>
-        {chatOpen && <Chatbot />}
+        <button
+  className="fab"
+  title="Ayuda"
+  onClick={() =>
+    window.open(
+      "https://agent.jotform.com/0199ee22e3507441ae60ecc8dc3dde4c9ec2",
+      "_blank",
+      "noopener,noreferrer"
+    )
+  }
+>
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+    <path
+      d="M4 5h16v10H7l-3 3V5Z"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinejoin="round"
+    />
+  </svg>
+</button>
       </main>
       <Footer />
     </>
