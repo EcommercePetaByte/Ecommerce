@@ -144,3 +144,8 @@
   content:""; flex:1; height:1px; background: var(--border);
 }
 .oauth-divider span{ display:inline-block; min-width: 26px; text-align:center }
+/* Estilo para el mensaje de éxito */
+.alert.success {
+  background: color-mix(in srgb, #28a745 18%, var(--surface-2));
+  border-color: color-mix(in srgb, #28a745 50%, transparent);
+}

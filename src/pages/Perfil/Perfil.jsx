@@ -13,7 +13,7 @@ import {
 import "./Perfil.css";
 
 // El componente ya no necesita la prop "onLogout"
-export default function Perfil() { 
+export default function Perfil() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -32,6 +32,7 @@ export default function Perfil() {
 
   const handleSave = (e) => {
     e.preventDefault();
+    // TODO: guardar en backend
     setEdit(false);
   };
 
@@ -41,18 +42,37 @@ export default function Perfil() {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("isAuthenticated"); // También el item viejo
     
-    // 2. Redirigimos al usuario a la página de inicio
-    alert("Sesión cerrada correctamente.");
+    // 2. Redirigimos al usuario a la página de inicio y recargamos
+    //    La recarga es útil para asegurar que todos los componentes (como el Header)
+    //    se actualicen y reflejen que ya no hay sesión.
     navigate("/");
-    // Opcional: Recargar la página para limpiar cualquier estado residual
     window.location.reload(); 
   };
 
   return (
     <>
       <Header />
+
       <main className="perfil container">
-        {/* ... El resto del JSX se mantiene igual ... */}
+        <header className="perfil-head">
+          <div className="perfil-title">
+            <h1>Tu perfil</h1>
+            <p>Gestioná tus datos, direcciones y pedidos.</p>
+          </div>
+
+          <div className="perfil-tabs">
+            <span className="chip chip-on">Información</span>
+            <button
+              className="chip"
+              type="button"
+              onClick={() => navigate("/perfil?tab=pedidos")}
+              title="Ver historial de compras"
+            >
+              Pedidos
+            </button>
+          </div>
+        </header>
+
         <section className="perfil-grid">
           <aside className="perfil-aside card">
             <div className="avatar-wrap" aria-label="Avatar del usuario">
@@ -62,6 +82,7 @@ export default function Perfil() {
               <strong className="avatar-name">{form.nombre}</strong>
               <span className="avatar-mail">{form.email}</span>
             </div>
+
             <div className="aside-actions">
               <button
                 className="btn btn-full"
@@ -72,7 +93,7 @@ export default function Perfil() {
                 <History size={18} />
                 Historial de compras
               </button>
-              {/* Este botón ahora funcionará correctamente */}
+
               <button
                 className="btn btn-danger btn-full"
                 type="button"
@@ -83,9 +104,119 @@ export default function Perfil() {
                 Cerrar sesión
               </button>
             </div>
-            {/* ... El resto del JSX ... */}
+
+            <div className="mini-stats">
+              <div className="stat">
+                <span className="stat-k">8</span>
+                <span className="stat-l">Pedidos</span>
+              </div>
+              <div className="stat">
+                <span className="stat-k">$ 356.000</span>
+                <span className="stat-l">Gastado</span>
+              </div>
+              <div className="stat">
+                <span className="stat-k">Gold</span>
+                <span className="stat-l">Membresía</span>
+              </div>
+            </div>
           </aside>
-          {/* ... El resto del JSX ... */}
+
+          <section className="perfil-main card">
+            <div className="main-head">
+              <h2>Información del perfil</h2>
+              {!edit ? (
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => setEdit(true)}
+                  title="Editar datos"
+                >
+                  <PencilLine size={18} />
+                  Editar
+                </button>
+              ) : (
+                <div className="edit-actions">
+                  <button className="btn btn-secondary" type="button" onClick={() => setEdit(false)}>
+                    Cancelar
+                  </button>
+                  <button className="btn" type="submit" form="perfil-form">
+                    Guardar
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <form id="perfil-form" className="form-grid" onSubmit={handleSave}>
+              <label className="fi">
+                <span>Nombre</span>
+                <div className="input">
+                  <UserRound size={16} />
+                  <input
+                    id="nombre"
+                    type="text"
+                    value={form.nombre}
+                    onChange={onChange}
+                    disabled={!edit}
+                  />
+                </div>
+              </label>
+
+              <label className="fi">
+                <span>Email</span>
+                <div className="input">
+                  <Mail size={16} />
+                  <input
+                    id="email"
+                    type="email"
+                    value={form.email}
+                    onChange={onChange}
+                    disabled={!edit}
+                  />
+                </div>
+              </label>
+
+              <label className="fi">
+                <span>Teléfono</span>
+                <div className="input">
+                  <Phone size={16} />
+                  <input
+                    id="telefono"
+                    type="tel"
+                    value={form.telefono}
+                    onChange={onChange}
+                    disabled={!edit}
+                  />
+                </div>
+              </label>
+
+              <label className="fi fi-wide">
+                <span>Domicilio</span>
+                <div className="input">
+                  <MapPin size={16} />
+                  <input
+                    id="domicilio"
+                    type="text"
+                    value={form.domicilio}
+                    onChange={onChange}
+                    disabled={!edit}
+                  />
+                </div>
+              </label>
+            </form>
+
+            <div className="subcards">
+              <div className="subcard">
+                <h3>Direcciones</h3>
+                <p className="muted">Gestioná tus direcciones para envíos rápidos.</p>
+                <button className="btn btn-secondary" type="button">Agregar dirección</button>
+              </div>
+              <div className="subcard">
+                <h3>Seguridad</h3>
+                <p className="muted">Actualizá tu contraseña y activá 2FA.</p>
+                <button className="btn btn-secondary" type="button">Cambiar contraseña</button>
+              </div>
+            </div>
+          </section>
         </section>
       </main>
     </>
