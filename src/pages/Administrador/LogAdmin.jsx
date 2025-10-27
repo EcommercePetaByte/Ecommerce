@@ -1,27 +1,50 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../api"; // tu instancia de axios con token configurado
 import "./admin.css";
 
 export default function LogAdmin({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!username || !password) {
       setError("Por favor, completa todos los campos.");
       return;
     }
 
-    if (username === "admin" && password === "1234") {
+    try {
+      setLoading(true);
       setError("");
-      onLogin();
-      navigate("/admin");
-    } else {
-      setError("Credenciales incorrectas.");
+
+      // POST al backend
+      const res = await api.post("/auth/login", { username, password });
+      const data = res.data;
+
+      if (data?.token) {
+        // Guardamos el token
+        localStorage.setItem("jwtToken", data.token);
+        localStorage.setItem("isAuthenticated", "true");
+
+        // Verificamos rol de admin
+        if (data.roles?.includes("ADMIN")) {
+          onLogin();
+          navigate("/admin");
+        } else {
+          setError("No tenés permisos de administrador.");
+        }
+      } else {
+        setError("Usuario o contraseña incorrectos.");
+      }
+    } catch (err) {
+      console.error("Error login admin:", err);
+      setError("Ocurrió un error al conectarse al servidor.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -29,10 +52,10 @@ export default function LogAdmin({ onLogin }) {
     <div
       style={{
         display: "flex",
-        justifyContent: "center", // centra horizontalmente
-        alignItems: "center",     // centra verticalmente
-        minHeight: "100vh",       // altura completa de la ventana
-        width: "100vw",           // ancho completo
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        width: "100vw",
         margin: 0,
         padding: 0,
         background: "var(--surface)",
@@ -89,6 +112,7 @@ export default function LogAdmin({ onLogin }) {
         )}
         <button
           type="submit"
+          disabled={loading}
           style={{
             background: "var(--brand)",
             color: "#fff",
@@ -99,7 +123,7 @@ export default function LogAdmin({ onLogin }) {
             cursor: "pointer",
           }}
         >
-          Ingresar
+          {loading ? "Ingresando…" : "Ingresar"}
         </button>
       </form>
     </div>

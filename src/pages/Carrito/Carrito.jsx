@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Header from "../../components/Header/Header.jsx";
+import api from "../../api.js";
 import {
   getCarrito,
   vaciarCarrito,
@@ -35,12 +36,25 @@ export default function Carrito() {
     if (!token) navigate("/login");
   }, [navigate]);
 
-  // Carga inicial del carrito
+  // 🔹 Carga inicial del carrito
   useEffect(() => {
     setProductos(getCarrito());
   }, []);
 
-  // Actualiza carrito automáticamente si cambia en otra pestaña
+  // 🔹 Ejemplo: llamada al backend con token (solo si querés probar)
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        const res = await api.get("/productos");
+        console.log("Productos desde backend:", res.data);
+      } catch (err) {
+        console.error("Error al obtener productos:", err);
+      }
+    };
+    fetchProductos();
+  }, []);
+
+  // 🔹 Actualiza carrito automáticamente si cambia en otra pestaña
   useEffect(() => {
     const handleStorage = () => setProductos(getCarrito());
     const handleCustom = () => setProductos(getCarrito());
@@ -190,27 +204,6 @@ export default function Carrito() {
             </p>
           </aside>
         </section>
-
-        <button
-          className="fab"
-          title="Ayuda"
-          onClick={() =>
-            window.open(
-              "https://agent.jotform.com/0199ee22e3507441ae60ecc8dc3dde4c9ec2",
-              "_blank",
-              "noopener,noreferrer"
-            )
-          }
-        >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M4 5h16v10H7l-3 3V5Z"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
       </main>
     </div>
   );

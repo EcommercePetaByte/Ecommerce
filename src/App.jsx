@@ -3,7 +3,7 @@ import "./App.css";
 import "./theme.css";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import api from "./api"; // <-- usamos tu instancia configurada con baseURL y token
 
 // Páginas del usuario
 import Home from "./pages/Home/Home";
@@ -27,10 +27,14 @@ import LogAdmin from "./pages/Administrador/LogAdmin";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Revisar token al cargar la app
+  // Revisar token al cargar la app y setearlo en api
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
-    setIsAuthenticated(!!token);
+    if (token) {
+      setIsAuthenticated(true);
+      // @ts-ignore
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
   }, []);
 
   // ====== DATA DE EJEMPLO ======
@@ -62,51 +66,17 @@ function App() {
     });
   }, []);
 
-  // Login de usuario (backend real)
-  const handleLogin = async (username, password) => {
-    try {
-      const res = await axios.post("http://localhost:8080/api/auth/login", {
-        username,
-        password,
-      });
-
-      const data = res.data;
-      if (data?.token) {
-        localStorage.setItem("jwtToken", data.token);
-        setIsAuthenticated(true);
-        return data;
-      } else {
-        return null;
-      }
-    } catch (err) {
-      console.error("Error login:", err);
-      return null;
-    }
-  };
-
-  // Registro de usuario (backend real)
-  const handleRegister = async (username, email, password) => {
-    try {
-      const res = await axios.post("http://localhost:8080/api/auth/register", {
-        username,
-        email,
-        password,
-      });
-
-      if (res.status !== 201) throw new Error("Error al registrar usuario");
-
-      // Hacemos login automático
-      return await handleLogin(username, password);
-    } catch (err) {
-      console.error("Error register:", err);
-      return null;
-    }
-  };
+  // --- LÓGICA DE LOGIN Y REGISTER ELIMINADA ---
+  // (La lógica real ahora vive en Login.jsx, que es correcto)
 
   // Logout global
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("remember_user");
+    // MODIFICACIÓN: Limpiamos también los roles al hacer logout
+    localStorage.removeItem("userRoles");
+    // @ts-ignore
+    delete api.defaults.headers.common["Authorization"];
     setIsAuthenticated(false);
   };
 
@@ -126,6 +96,9 @@ function App() {
         />
         <Route
           path="/login"
+          // --- ESTA ES LA CORRECCIÓN ---
+          // Le pasamos setIsAuthenticated para que Login.jsx pueda
+          // actualizar el estado de App.jsx
           element={<Login setIsAuthenticated={setIsAuthenticated} />}
         />
 
@@ -165,12 +138,12 @@ function App() {
         <Route path="/categoria/:nombreCategoria" element={<Categoria productos={products} />} />
         <Route path="/buscar" element={<Buscar />} />
 
-        {/* ===== Panel Admin ===== */}
+        {/* ===== Panel Admin (RUTA CORREGIDA) ===== */}
         <Route path="/login-admin" element={<LogAdmin onLogin={() => setIsAuthenticated(true)} />} />
         <Route
           path="/admin/*"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <ProtectedRoute isAuthenticated={isAuthenticated} requiredRole="ROLE_ADMIN">
               <AdminLayout />
             </ProtectedRoute>
           }

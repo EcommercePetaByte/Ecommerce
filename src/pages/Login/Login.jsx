@@ -1,12 +1,20 @@
-import { useEffect, useRef, useState } from "react"; 
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+// @ts-ignore
 import AuthLayout from "../../layouts/AuthLayout.jsx";
+// @ts-ignore
 import Logo from "../../components/Logo/Logo";
 import { Eye, EyeOff, LogIn } from "lucide-react";
-import axios from "axios";
+// @ts-ignore
+import api from "../../api.js"; // <-- Usamos tu instancia configurada con baseURL y token
+// @ts-ignore
 import "./Login.css";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Usamos una variable para el Client ID para evitar errores de 'import.meta'
+const VITE_GOOGLE_CLIENT_ID = (typeof import.meta !== 'undefined' ? import.meta.env?.VITE_GOOGLE_CLIENT_ID : undefined) || null;
+
 
 function decodeJwt(jwt) {
   try {
@@ -57,8 +65,12 @@ const Login = ({ setIsAuthenticated }) => {
 
   useEffect(() => {
     if (!gisReady || !googleDivRef.current) return;
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    if (!clientId) return;
+    const clientId = VITE_GOOGLE_CLIENT_ID;
+    
+    if (!clientId) {
+      console.warn("VITE_GOOGLE_CLIENT_ID no está configurado en .env");
+      return;
+    }
 
     window.google?.accounts.id.initialize({
       client_id: clientId,
@@ -67,22 +79,39 @@ const Login = ({ setIsAuthenticated }) => {
         if (!payload?.email) return;
 
         try {
-          const res = await axios.post("http://localhost:8080/api/auth/google", {
+          const res = await api.post("/auth/google", {
             email: payload.email,
             username: payload.name || payload.email.split("@")[0],
           });
 
           const jwt = res.data?.token;
+          const roles = res.data?.roles; // <-- MODIFICACIÓN: Extraer roles
           if (!jwt) throw new Error("No se recibió token del backend");
 
           localStorage.setItem("jwtToken", jwt);
+          if (roles) { // <-- MODIFICACIÓN: Si existen roles
+            localStorage.setItem("userRoles", JSON.stringify(roles)); // <-- MODIFICACIÓN: Guardarlos
+          }
           localStorage.setItem("remember_user", payload.email);
           localStorage.setItem("isAuthenticated", "true");
           setIsAuthenticated(true);
           navigate("/");
         } catch (err) {
+          // --- MODIFICACIÓN GOOGLE ---
           console.error("Error login Google:", err);
-          setError("Error al iniciar sesión con Google");
+          if (err.response) {
+            // Error del backend al procesar el token de Google
+            if (typeof err.response.data === 'string' && err.response.data.length < 100) {
+              setError(err.response.data);
+            } else {
+              setError("Error del servidor al procesar el login con Google.");
+            }
+          } else if (err.request) {
+            setError("No se pudo conectar con el servidor. Revisa tu conexión.");
+          } else {
+            setError("Ocurrió un error inesperado con Google.");
+          }
+          // --- FIN MODIFICACIÓN ---
         }
       },
       ux_mode: "popup",
@@ -127,37 +156,61 @@ const Login = ({ setIsAuthenticated }) => {
       if (remember) localStorage.setItem("remember_user", username);
       else localStorage.removeItem("remember_user");
 
+      let res;
       if (isRegister) {
-        const res = await axios.post("http://localhost:8080/api/auth/register", {
-          username,
-          email,
-          password,
-        });
-        const jwt = res.data?.token;
-        if (jwt) {
-          localStorage.setItem("jwtToken", jwt);
-          localStorage.setItem("isAuthenticated", "true");
-          setIsAuthenticated(true);
-          navigate("/");
-        }
+        res = await api.post("/auth/register", { username, email, password });
       } else {
-        const res = await axios.post("http://localhost:8080/api/auth/login", {
-          username,
-          password,
-        });
-        const jwt = res.data?.token;
-        if (jwt) {
-          localStorage.setItem("jwtToken", jwt);
-          localStorage.setItem("isAuthenticated", "true");
-          setIsAuthenticated(true);
-          navigate("/");
-        } else {
-          setError("Usuario o contraseña incorrectos.");
+        res = await api.post("/auth/login", { username, password });
+      }
+
+      const jwt = res.data?.token;
+      const roles = res.data?.roles; // <-- MODIFICACIÓN: Extraer roles
+      
+      // Si la petición fue exitosa (2xx) y vino un token...
+      if (jwt) {
+        localStorage.setItem("jwtToken", jwt);
+        if (roles) { // <-- MODIFICACIÓN: Si existen roles
+          localStorage.setItem("userRoles", JSON.stringify(roles)); // <-- MODIFICACIÓN: Guardarlos
         }
+        localStorage.setItem("isAuthenticated", "true");
+        setIsAuthenticated(true);
+
+        // Opcional: configuramos api para que use el token automáticamente
+        // @ts-ignore
+        api.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
+
+        navigate("/");
+      } else {
+         // Esto es por si el backend responde 200 pero sin token (no debería pasar)
+         setError(isRegister ? "Error al registrarse." : "No se recibió respuesta del servidor.");
       }
     } catch (err) {
-      console.error(err);
-      setError("Ocurrió un error al conectarse al servidor.");
+      // --- MODIFICACIÓN PRINCIPAL ---
+      console.error("Error en handleSubmit:", err);
+
+      if (err.response) {
+        // El servidor respondió con un código de error (4xx, 5xx)
+        if (err.response.status === 401) {
+          setError("Usuario o contraseña incorrectos.");
+        } else if (err.response.status === 400) {
+          // El backend de registro envía un string como 'data' con el error
+          if (typeof err.response.data === 'string' && err.response.data.length < 100) {
+            setError(err.response.data); // Ej: "El email ya está en uso"
+          } else {
+            setError("Datos incorrectos. Revisa el formulario.");
+          }
+        } else {
+          // Otros errores del servidor (500, 503, etc.)
+          setError("Error del servidor. Inténtalo más tarde.");
+        }
+      } else if (err.request) {
+        // La petición se hizo pero no se recibió respuesta (servidor caído, CORS)
+        setError("No se pudo conectar con el servidor. Revisa tu conexión.");
+      } else {
+        // Error al configurar la petición (error de código antes de enviar)
+        setError("Ocurrió un error inesperado.");
+      }
+      // --- FIN MODIFICACIÓN ---
     } finally {
       setLoading(false);
     }
@@ -174,7 +227,7 @@ const Login = ({ setIsAuthenticated }) => {
         <div className="oauth-block">
           <div className="oauth-grid">
             <div className="oauth-provider">
-              {import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
+              {VITE_GOOGLE_CLIENT_ID ? (
                 <div ref={googleDivRef} className="google-btn-portal" />
               ) : (
                 <button className="oauth-fallback">
@@ -275,3 +328,4 @@ const Login = ({ setIsAuthenticated }) => {
 };
 
 export default Login;
+
