@@ -1,21 +1,30 @@
-import { Navigate } from "react-router-dom";
+import { Navigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
-export default function ProtectedRoute({ isAuthenticated, requiredRole, children }) {
-  // 1. Lee los roles guardados en el login
-  const userRoles = JSON.parse(localStorage.getItem("userRoles")) || [];
+export default function ProtectedRoute({ children, requiredRole, redirectTo = '/login' }) {
+  const token = localStorage.getItem('jwtToken');
 
-  // 2. Si no está logueado, lo manda al login
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  if (!token) {
+    return <Navigate to={redirectTo} replace />;
   }
 
-  // 3. Si la ruta requiere un rol específico (ej. "ROLE_ADMIN")...
-  //    y el usuario no lo tiene en su lista de roles...
-  if (requiredRole && !userRoles.includes(requiredRole)) {
-    // ...lo manda al inicio (o a una página de "Acceso Denegado")
-    return <Navigate to="/" replace />;
-  }
+  try {
+    const user = jwtDecode(token);
 
-  // 4. Si pasó las dos verificaciones, le permite ver el contenido.
-  return children;
+    if (requiredRole) {
+      // @ts-ignore
+      const hasPermission = user.roles?.includes(requiredRole);
+      
+      if (!hasPermission) {
+        return <Navigate to={redirectTo} replace />;
+      }
+    }
+
+    return children;
+
+  } catch (error) {
+    console.error("Token inválido o expirado:", error);
+    localStorage.removeItem('jwtToken');
+    return <Navigate to={redirectTo} replace />;
+  }
 }

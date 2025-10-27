@@ -3,41 +3,59 @@ import "./App.css";
 import "./theme.css";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// @ts-ignore
 import api from "./api"; // <-- usamos tu instancia configurada con baseURL y token
 
 // Páginas del usuario
+// @ts-ignore
 import Home from "./pages/Home/Home";
+// @ts-ignore
 import Login from "./pages/Login/Login";
+// @ts-ignore
 import DetalleProducto from "./pages/DetalleProducto/DetalleProducto";
+// @ts-ignore
 import Categoria from "./pages/Categoria/Categoria";
+// @ts-ignore
 import Carrito from "./pages/Carrito/Carrito";
+// @ts-ignore
 import Pago from "./pages/Pago/Pago";
+// @ts-ignore
 import Perfil from "./pages/Perfil/Perfil";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+// @ts-ignore
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute"; // Este archivo también lo modificaremos
+// @ts-ignore
 import Buscar from "./pages/Buscar/Buscar";
 
 // Admin
+// @ts-ignore
 import AdminLayout from "./pages/Administrador/AdminLayout";
+// @ts-ignore
 import Dashboard from "./pages/Administrador/Dashboard";
+// @ts-ignore
 import Productos from "./pages/Administrador/Productos";
+// @ts-ignore
 import Pedidos from "./pages/Administrador/Pedidos";
+// @ts-ignore
 import Ajustes from "./pages/Administrador/Ajustes";
+// @ts-ignore
 import LogAdmin from "./pages/Administrador/LogAdmin";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // ELIMINAMOS el estado 'isAuthenticated' de aquí.
+  // Ya no es necesario y es lo que causa la "race condition".
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Revisar token al cargar la app y setearlo en api
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
     if (token) {
-      setIsAuthenticated(true);
+      // Ya no necesitamos setIsAuthenticated(true);
       // @ts-ignore
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
   }, []);
 
-  // ====== DATA DE EJEMPLO ======
+  // ====== DATA DE EJEMPLO (Se mantiene) ======
   const BASE = [
     {
       name: "Mouse gamer",
@@ -66,19 +84,8 @@ function App() {
     });
   }, []);
 
-  // --- LÓGICA DE LOGIN Y REGISTER ELIMINADA ---
-  // (La lógica real ahora vive en Login.jsx, que es correcto)
-
-  // Logout global
-  const handleLogout = () => {
-    localStorage.removeItem("jwtToken");
-    localStorage.removeItem("remember_user");
-    // MODIFICACIÓN: Limpiamos también los roles al hacer logout
-    localStorage.removeItem("userRoles");
-    // @ts-ignore
-    delete api.defaults.headers.common["Authorization"];
-    setIsAuthenticated(false);
-  };
+  // La función de Logout ahora debe vivir dentro de los componentes que la usan
+  // (Ej: Perfil.jsx o AdminLayout.jsx) para simplificar App.jsx
 
   return (
     <Router>
@@ -88,33 +95,30 @@ function App() {
           path="/"
           element={
             <Home
-              isAuthenticated={isAuthenticated}
               productos={products}
-              onLogout={handleLogout}
+              // onLogout lo quitamos de aquí
             />
           }
         />
         <Route
           path="/login"
-          // --- ESTA ES LA CORRECCIÓN ---
-          // Le pasamos setIsAuthenticated para que Login.jsx pueda
-          // actualizar el estado de App.jsx
-          element={<Login setIsAuthenticated={setIsAuthenticated} />}
+          // Login.jsx ya no necesita 'setIsAuthenticated'
+          element={<Login />}
         />
 
-        {/* ===== Rutas protegidas de usuario ===== */}
+        {/* ===== Rutas protegidas de usuario (ahora son autónomas) ===== */}
         <Route
           path="/perfil"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Perfil onLogout={handleLogout} />
+            <ProtectedRoute redirectTo="/login">
+              <Perfil /* onLogout={handleLogout} */ />
             </ProtectedRoute>
           }
         />
         <Route
           path="/carrito"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <ProtectedRoute redirectTo="/login">
               <Carrito productos={products} />
             </ProtectedRoute>
           }
@@ -122,7 +126,7 @@ function App() {
         <Route
           path="/pago"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <ProtectedRoute redirectTo="/login">
               <Pago />
             </ProtectedRoute>
           }
@@ -132,22 +136,32 @@ function App() {
         <Route
           path="/producto/:id"
           element={
-            <DetalleProducto productos={products} isAuthenticated={isAuthenticated} />
+            <DetalleProducto productos={products} />
           }
         />
         <Route path="/categoria/:nombreCategoria" element={<Categoria productos={products} />} />
         <Route path="/buscar" element={<Buscar />} />
 
-        {/* ===== Panel Admin (RUTA CORREGIDA) ===== */}
-        <Route path="/login-admin" element={<LogAdmin onLogin={() => setIsAuthenticated(true)} />} />
+        {/* ===== Panel Admin (RUTAS CORREGIDAS Y SIMPLIFICADAS) ===== */}
+        <Route
+          path="/login-admin"
+          // LogAdmin ya no necesita 'onLogin'
+          element={<LogAdmin />}
+        />
         <Route
           path="/admin/*"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated} requiredRole="ROLE_ADMIN">
+            // Esta ruta protegida ahora es autónoma y funciona al instante
+            // Ya no necesita 'isAuthenticated'
+            <ProtectedRoute
+              requiredRole="ROLE_ADMIN"
+              redirectTo="/login-admin"
+            >
               <AdminLayout />
             </ProtectedRoute>
           }
         >
+          {/* Estas rutas anidadas están protegidas por el 'ProtectedRoute' del padre */}
           <Route index element={<Dashboard />} />
           <Route path="productos" element={<Productos />} />
           <Route path="pedidos" element={<Pedidos />} />
@@ -159,3 +173,4 @@ function App() {
 }
 
 export default App;
+
