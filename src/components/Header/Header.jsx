@@ -20,9 +20,9 @@ const Header = () => {
   const [openFiltros, setOpenFiltros] = useState(false);
   const categoriasRef = useRef(null);
   const filtrosRef = useRef(null);
+  
+  // --- Estados para la búsqueda ---
   const [searchText, setSearchText] = useState("");
-  const [cartCount, setCartCount] = useState(0);
-
   const [filters, setFilters] = useState({
     categoria: "",
     min: "",
@@ -32,13 +32,7 @@ const Header = () => {
     orden: "",
   });
 
-  const handleFilterChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  const [cartCount, setCartCount] = useState(0);
 
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("theme");
@@ -48,6 +42,36 @@ const Header = () => {
       : "dark";
   });
 
+  // --- Manejador de cambios para los filtros ---
+  const handleFilterChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+  
+  // --- Lógica de envío del formulario de búsqueda ---
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    // Usamos URLSearchParams para construir la URL de forma segura
+    const params = new URLSearchParams();
+
+    // Añadimos cada filtro a la URL solo si tiene un valor
+    if (searchText) params.append("q", searchText);
+    if (filters.categoria) params.append("categoria", filters.categoria);
+    if (filters.min) params.append("min", filters.min);
+    if (filters.max) params.append("max", filters.max);
+    if (filters.envioGratis) params.append("envioGratis", "true");
+    if (filters.descuento) params.append("descuento", "true");
+    if (filters.orden) params.append("orden", filters.orden);
+
+    // Navegamos a la página de búsqueda con los parámetros construidos
+    navigate(`/buscar?${params.toString()}`);
+    setOpenFiltros(false); // Cerramos el menú de filtros después de buscar
+  };
+
+
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("theme", theme);
@@ -56,13 +80,8 @@ const Header = () => {
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   const categorias = [
-    "Periféricos",
-    "Componentes",
-    "Audio",
-    "Monitores",
-    "Computadoras",
-    "Accesorios",
-    "Sillas",
+    "Periféricos", "Componentes", "Audio", "Monitores",
+    "Computadoras", "Accesorios", "Sillas",
   ];
 
   useEffect(() => {
@@ -93,30 +112,14 @@ const Header = () => {
     setIsLoggedIn(!!localStorage.getItem("jwtToken"));
   }, [location]);
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    const params = new URLSearchParams();
-
-    if (searchText) params.append("q", searchText);
-    if (filters.categoria) params.append("categoria", filters.categoria);
-    if (filters.min) params.append("min", filters.min);
-    if (filters.max) params.append("max", filters.max);
-    if (filters.envioGratis) params.append("envioGratis", "true");
-    if (filters.descuento) params.append("descuento", "true");
-    if (filters.orden) params.append("orden", filters.orden);
-
-    navigate(`/buscar?${params.toString()}`);
-    setOpenFiltros(false);
-  };
-
   return (
     <header className="nav">
       <div className="nav-inner">
         <Logo />
 
-        {/* Buscador con filtros */}
-        <div className="search-container" ref={filtrosRef}>
-          <form className="search" role="search" onSubmit={handleSearchSubmit}>
+        {/* El formulario ahora envuelve toda la barra de búsqueda y los filtros */}
+        <form className="search-container" ref={filtrosRef} onSubmit={handleSearchSubmit}>
+          <div className="search" role="search">
             <button type="submit" className="buscar-btn" title="Buscar">
               <Search size={18} />
             </button>
@@ -130,17 +133,18 @@ const Header = () => {
             />
 
             <button
-              type="button"
+              type="button" // Es 'button' para no enviar el form, solo abre el menú
               className="filtros-btn"
               onClick={() => setOpenFiltros((v) => !v)}
               title="Filtros avanzados"
             >
               <SlidersHorizontal size={18} />
             </button>
-          </form>
+          </div>
 
           {openFiltros && (
             <div className="filtros-dropdown">
+              {/* Contenido de los filtros */}
               <select
                 name="categoria"
                 value={filters.categoria}
@@ -148,45 +152,33 @@ const Header = () => {
               >
                 <option value="">Todas las categorías</option>
                 {categorias.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
+                  <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
 
               <div className="precio-inputs">
                 <input
-                  type="number"
-                  name="min"
-                  placeholder="Precio mínimo"
-                  value={filters.min}
-                  onChange={handleFilterChange}
+                  type="number" name="min" placeholder="Precio mínimo"
+                  value={filters.min} onChange={handleFilterChange}
                 />
                 <input
-                  type="number"
-                  name="max"
-                  placeholder="Precio máximo"
-                  value={filters.max}
-                  onChange={handleFilterChange}
+                  type="number" name="max" placeholder="Precio máximo"
+                  value={filters.max} onChange={handleFilterChange}
                 />
               </div>
 
               <label>
                 <input
-                  type="checkbox"
-                  name="envioGratis"
-                  checked={filters.envioGratis}
-                  onChange={handleFilterChange}
+                  type="checkbox" name="envioGratis"
+                  checked={filters.envioGratis} onChange={handleFilterChange}
                 />
                 Envío gratis
               </label>
 
               <label>
                 <input
-                  type="checkbox"
-                  name="descuento"
-                  checked={filters.descuento}
-                  onChange={handleFilterChange}
+                  type="checkbox" name="descuento"
+                  checked={filters.descuento} onChange={handleFilterChange}
                 />
                 Con descuento
               </label>
@@ -199,20 +191,17 @@ const Header = () => {
                 <option value="">Ordenar por</option>
                 <option value="precioAsc">Precio: menor a mayor</option>
                 <option value="precioDesc">Precio: mayor a menor</option>
-                <option value="nombreAsc">Nombre: A-Z</option>
-                <option value="nombreDesc">Nombre: Z-A</option>
               </select>
 
+              {/* Este botón SÍ envía el formulario completo */}
               <button type="submit" className="btn-filtrar">
                 Aplicar filtros
               </button>
             </div>
           )}
-        </div>
+        </form>
 
-        {/* ICONOS a la derecha: Carrito -> Modo Claro -> Categorías -> Perfil/Login */}
         <div className="icons" style={{ marginLeft: "auto" }}>
-          {/* Carrito */}
           <div className="cart-icon-wrapper">
             <Link to="/carrito" className="icon-btn cart-btn" title="Carrito">
               <ShoppingCart size={22} />
@@ -220,7 +209,6 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Modo claro/oscuro */}
           <button
             className={`icon-btn foco-btn ${theme === "light" ? "on" : ""}`}
             onClick={toggleTheme}
@@ -233,7 +221,6 @@ const Header = () => {
             />
           </button>
 
-          {/* Categorías */}
           <div className="categorias-wrapper" ref={categoriasRef}>
             <button
               className="categorias-btn"
@@ -266,7 +253,6 @@ const Header = () => {
             )}
           </div>
 
-          {/* Perfil / Login */}
           {isLoggedIn ? (
             <Link to="/perfil" className="icon-btn" title="Perfil">
               <UserRound size={20} />

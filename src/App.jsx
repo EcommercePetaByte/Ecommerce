@@ -56,7 +56,7 @@ function App() {
         {/* ▼▼▼ PASAMOS EL ESTADO A LAS PÁGINAS QUE LO NECESITAN ▼▼▼ */}
         <Route path="/" element={<Home isAuthenticated={isAuthenticated} productos={products} />} />
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-        <Route path="/producto/:id" element={<DetalleProducto isAuthenticated={isAuthenticated} productos={products} />} />
+        <Route path="/producto/:id" element={<DetalleProducto />} />
         <Route path="/categoria/:nombreCategoria" element={<Categoria isAuthenticated={isAuthenticated} productos={products} />} />
         <Route path="/buscar" element={<Buscar />} />
 

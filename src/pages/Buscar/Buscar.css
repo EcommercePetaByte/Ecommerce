@@ -84,3 +84,97 @@
 .muted{ color:var(--muted) }
 .section-title{ margin:0; font-size:clamp(18px,2.4vw,22px); font-weight:900 }
 
+/* Contenedor principal de la página de búsqueda */
+.busqueda-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.busqueda-container h1 {
+  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 2.5rem;
+  color: var(--text-primary);
+}
+
+/* Cuadrícula para los productos */
+.productos-grid {
+  display: grid;
+  /* Crea columnas flexibles que se adaptan al espacio */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem; /* Espacio entre las tarjetas */
+}
+
+/* Mensajes de estado (cargando, error, no resultados) */
+.busqueda-estado, .no-resultados {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+.busqueda-estado.error {
+  color: #e53e3e; /* Rojo para errores */
+}
+
+/* Estilo de cada tarjeta de producto */
+.producto-card {
+  background-color: var(--background-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none; /* Quita el subrayado del enlace */
+  color: inherit; /* Hereda el color del texto */
+  display: flex;
+  flex-direction: column;
+}
+
+.producto-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Contenedor de la imagen para mantener la proporción */
+.producto-imagen-container {
+  width: 100%;
+  padding-top: 100%; /* Crea un aspect-ratio de 1:1 */
+  position: relative;
+  background-color: #f0f0f0; /* Color mientras carga la imagen */
+}
+
+.producto-imagen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Asegura que la imagen cubra el espacio sin deformarse */
+}
+
+/* Información del producto (nombre, precio) */
+.producto-info {
+  padding: 1rem;
+  text-align: left;
+  flex-grow: 1; /* Permite que este contenedor crezca si es necesario */
+  display: flex;
+  flex-direction: column;
+}
+
+.producto-nombre {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+  /* Trunca el texto si es muy largo */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.producto-precio {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--accent-color, #007bff);
+  margin: 0;
+  margin-top: auto; /* Empuja el precio hacia abajo */
+}
