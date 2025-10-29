@@ -105,3 +105,51 @@
 }
 .subcard h3{ margin:0 0 4px; font-size:16px }
 .muted{ color: var(--muted) }
+/* ====== Estilos para la sección de Direcciones ====== */
+.address-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+.address-item p {
+  margin: 0;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.btn-icon-danger {
+  background: transparent;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.btn-icon-danger:hover {
+  background: #ff6b6b20; /* Un fondo sutil al pasar el mouse */
+}
+
+/* Estilos para los inputs dentro del formulario de nueva dirección */
+.subcard.form-grid .fi {
+    display: flex;
+    flex-direction: column;
+}
+
+.subcard.form-grid input {
+    width: 100%;
+    background: var(--surface); /* Fondo un poco más claro que el del subcard */
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    color: var(--text);
+    font-size: 14px;
+}

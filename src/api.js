@@ -1,21 +1,19 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api', // Asegúrate que esta URL sea correcta
+  baseURL: "http://localhost:8080", // Asegurate que tu backend corra en este puerto
 });
 
-// CORRECCIÓN: Interceptor para añadir el token a cada petición
+// Interceptor para añadir token JWT a cada request
 api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('jwtToken'); // <-- CORREGIDO
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+  (config) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
 export default api;
