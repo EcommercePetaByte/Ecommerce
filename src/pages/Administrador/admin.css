@@ -1,5 +1,5 @@
 /* ——— Tokens del tema existentes ———
-   Usa var(--bg), --surface, --surface-2, --text, --muted, --brand, etc.
+  Usa var(--bg), --surface, --surface-2, --text, --muted, --brand, etc.
 */
 
 /* Shell */
@@ -9,6 +9,8 @@
   min-height: 100dvh;
   background: var(--bg);
   color: var(--text);
+  /* --- MEJORA: Transición para el layout móvil --- */
+  transition: grid-template-columns 0.3s ease;
 }
 
 /* Sidebar */
@@ -20,6 +22,8 @@
   padding: 18px 16px;
   background: var(--surface);
   border-right: 1px solid var(--border, rgba(255,255,255,.08));
+  /* --- MEJORA: Transición para ocultar en móvil --- */
+  transition: transform 0.3s ease;
 }
 
 .admin-brand{
@@ -44,6 +48,8 @@
   padding: 10px 12px; border-radius: 12px;
   color: var(--text);
   border: 1px solid transparent;
+  /* --- MEJORA: Transición suave --- */
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 .navitem:hover{
   background: color-mix(in oklab, var(--surface-2) 86%, transparent);
@@ -62,6 +68,8 @@
   width:100%; height:40px; border-radius:12px;
   background: var(--surface-2); color: var(--text);
   border:1px solid var(--border); font-weight:800; cursor:pointer;
+  /* --- MEJORA: Transición suave --- */
+  transition: border-color 0.2s ease;
 }
 .btn-outline:hover{ border-color: var(--brand) }
 
@@ -84,14 +92,27 @@
   width:100%; height:40px; border-radius:12px;
   background: var(--surface-2); border:1px solid var(--border);
   color: var(--text); padding: 0 12px; outline: none;
+  /* --- MEJORA: Transición suave --- */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+/* --- MEJORA: Estado de foco para inputs --- */
+.searchbox input:focus,
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand) 30%, transparent);
+}
+
 .top-actions{ display:flex; align-items:center; gap:10px }
 .pill{
   height:40px; padding: 0 14px; border-radius:999px;
   border:1px solid var(--brand); background: var(--brand);
   color:#fff; font-weight:900; cursor:pointer;
+  /* --- MEJORA: Transición suave --- */
+  transition: filter 0.2s ease;
 }
-.pill:hover{ filter:brightness(1.05) }
+.pill:hover{ filter:brightness(1.1) } /* --- MEJORA: Ligero brillo en hover --- */
 .avatar{
   width:36px; height:36px; border-radius:999px;
   display:grid; place-items:center; font-weight:900;
@@ -101,7 +122,19 @@
 /* Content area */
 .admin-content{
   padding: 18px;
-  display:grid; gap: 18px;
+  display:grid; 
+  gap: 18px;
+  /* --- MEJORA DE POSICIÓN --- */
+  /* Por defecto 1 columna (móvil/tablet) */
+  grid-template-columns: 1fr; 
+}
+/* --- MEJORA DE POSICIÓN --- */
+/* En pantallas grandes, 2 columnas (Tabla | Formulario) */
+@media (min-width: 1024px) {
+  .admin-content {
+    /* 2fr para la tabla, 1fr para el formulario. Ajusta según necesites */
+    grid-template-columns: 2fr 1fr; 
+  }
 }
 
 /* Cards métricas */
@@ -126,6 +159,8 @@
   background: var(--surface); border:1px solid var(--border);
   border-radius:14px; padding: 14px;
   box-shadow: var(--elev-soft);
+  /* --- MEJORA: Asegura que el panel no se encoja --- */
+  min-height: 0;
 }
 .panel-head{
   display:flex; align-items:center; justify-content:space-between;
@@ -141,23 +176,42 @@
 .table th, .table td{
   padding: 10px 12px; text-align:left;
   border-bottom:1px solid var(--border);
+  /* --- MEJORA: Transición suave --- */
+  transition: background 0.2s ease;
 }
 .table th{ color: var(--muted); font-weight:900; font-size:12px }
 .table tr:hover td{
   background: color-mix(in oklab, var(--surface-2) 80%, transparent);
 }
+/* --- MEJORA: Evita doble borde en la última fila --- */
+.table tr:last-child td {
+  border-bottom: none;
+}
 
 /* Botones pequeños */
-.btn, .btn-ghost{
+.btn, .btn-ghost, .btn-primary {
   height:32px; padding:0 12px; border-radius:10px; font-weight:800; cursor:pointer;
+  /* --- MEJORA: Transición suave --- */
+  transition: all 0.2s ease;
+}
+
+.btn, .btn-ghost {
   border:1px solid var(--border); background: var(--surface-2); color: var(--text);
 }
-.btn:hover{ border-color: var(--brand) }
+.btn:hover{ border-color: var(--brand); background: var(--surface-2) }
 .btn-primary{
-  border-color: var(--brand); background: var(--brand); color:#fff;
+  border:1px solid var(--brand); background: var(--brand); color:#fff;
+}
+/* --- MEJORA: Hover para botón primario --- */
+.btn-primary:hover {
+  border-color: var(--brand);
+  filter: brightness(1.1);
 }
 .btn-ghost{
   background: transparent;
+}
+.btn-ghost:hover {
+  background: var(--surface-2);
 }
 
 /* Formularios */
@@ -177,8 +231,31 @@
   height:42px; border-radius:12px; border:1px solid var(--border);
   background: var(--surface-2); color: var(--text);
   padding: 0 12px; outline: none;
+  /* --- MEJORA: Transición suave --- */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .form-field textarea{ height:auto; padding:12px; min-height:110px }
+
+/* --- MEJORA: Estilo para la previsualización de imagen --- */
+.img-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+.img-preview p {
+  font-weight:800; font-size:12px; color: var(--muted);
+  margin: 0;
+}
+.img-preview img {
+  max-width: 100% !important; /* Sobreescribe el style inline */
+  height: auto;
+  border-radius: 8px !important;
+  object-fit: cover;
+}
 
 /* Uploader simple */
 .uploader{
@@ -198,21 +275,46 @@
 .badge.warn{ background: color-mix(in oklab, #ffb703 30%, var(--surface-2)) }
 .badge.alert{ background: color-mix(in oklab, #ff4d4f 30%, var(--surface-2)) }
 
-/* ==== Fix superposición en Dashboard ==== */
+/* ==== Z-index y Responsividad Móvil ==== */
 .admin-shell { position: relative; }
+.admin-aside{ z-index: 30; }
+.admin-topbar{ z-index: 20; }
+.admin-content{ position: relative; z-index: 1; }
+.panel{ position: relative; }
+.table{ position: relative; }
+.badge{ position: relative; z-index: 1; }
 
-.admin-aside{
-  position: sticky;
-  top: 0;
-  z-index: 30;              /* ⬅️ sidebar siempre por encima del contenido */
+/* --- MEJORA: Layout para móvil (Tablets y Móviles) --- */
+@media (max-width: 768px) {
+  .admin-shell {
+    /* Cambia a 1 sola columna, el main ocupa todo */
+    grid-template-columns: 1fr;
+  }
+  .admin-aside {
+    /* Oculta la barra lateral fuera de la pantalla */
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  .admin-content {
+    /* Restaura la columna única por si acaso */
+    grid-template-columns: 1fr;
+    padding: 12px; /* Menos padding en móvil */
+  }
 }
 
-.admin-topbar{ z-index: 20; }  /* la topbar también por encima del main */
-
-.admin-content{ position: relative; z-index: 1; }
-.panel{ position: relative; }   /* crea contexto para hijos como badges */
-.table{ position: relative; }
-
-.badge{ position: relative; z-index: 1; } /* evita que los badges “salten” niveles */
-
-
+/* --- MEJORA: Scrollbar personalizado (Opcional, estético) --- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-2);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
