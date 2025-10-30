@@ -1,9 +1,67 @@
+import { useState, useEffect } from "react";
+
+// Ajusta la URL base de tu API si es necesario
+const API_URL = "http://localhost:8080/api";
+
 export default function Pedidos() {
-  const pedidos = [
-    { id:"#10234", fecha:"2025-09-12", cliente:"Juan Pérez", total:152000, pago:"MercadoPago", estado:"pagado" },
-    { id:"#10233", fecha:"2025-09-11", cliente:"Ana Rosa", total:89000, pago:"Tarjeta", estado:"pendiente" },
-    { id:"#10232", fecha:"2025-09-10", cliente:"Carlos Z", total:245000, pago:"Transferencia", estado:"enviado" },
-  ];
+  const [pedidos, setPedidos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPedidos = async () => {
+      const token = localStorage.getItem('jwtToken');
+      if (!token) {
+        setError("No estás autenticado.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/orders`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al obtener los pedidos. ¿Tienes permisos de administrador?');
+        }
+
+        const data = await response.json();
+        setPedidos(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPedidos();
+  }, []); // El array vacío asegura que se ejecute solo una vez
+
+  const getStatusClass = (estado) => {
+    switch (estado) {
+      case 'PAGADO':
+      case 'COMPLETADO':
+        return 'ok';
+      case 'ENVIADO':
+        return 'warn';
+      case 'PENDIENTE':
+      case 'CANCELADO':
+        return 'alert';
+      default:
+        return '';
+    }
+  };
+
+  if (loading) {
+    return <section className="panel"><p>Cargando pedidos...</p></section>;
+  }
+
+  if (error) {
+    return <section className="panel"><div className="alert">{error}</div></section>;
+  }
 
   return (
     <section className="panel">
@@ -22,14 +80,18 @@ export default function Pedidos() {
           </tr>
         </thead>
         <tbody>
-          {pedidos.map(p=>(
+          {pedidos.map(p => (
             <tr key={p.id}>
-              <td>{p.id}</td>
-              <td>{p.fecha}</td>
-              <td>{p.cliente}</td>
+              <td>#{p.id}</td>
+              <td>{new Date(p.orderDate).toLocaleDateString("es-AR")}</td>
+              <td>{p.user.username}</td>
               <td>${p.total.toLocaleString("es-AR")}</td>
-              <td>{p.pago}</td>
-              <td><span className={`badge ${p.estado==="pagado"?"ok":p.estado==="enviado"?"warn":"alert"}`}>{p.estado}</span></td>
+              <td>{p.paymentMethod}</td>
+              <td>
+                <span className={`badge ${getStatusClass(p.status)}`}>
+                  {p.status.toLowerCase()}
+                </span>
+              </td>
               <td><button className="btn">Ver</button></td>
             </tr>
           ))}
@@ -38,4 +100,3 @@ export default function Pedidos() {
     </section>
   );
 }
-
