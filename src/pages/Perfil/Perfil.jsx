@@ -47,8 +47,8 @@ export default function Perfil() {
     // Carga de datos del perfil y direcciones
     useEffect(() => {
         Promise.all([
-            api.get("/api/auth/perfil"),
-            api.get("/api/addresses")
+            api.get("/auth/perfil"),
+            api.get("/addresses")
         ])
         .then(([profileResponse, addressesResponse]) => {
             const userData = {
@@ -74,7 +74,7 @@ export default function Perfil() {
 
     // Guardar nueva dirección
     const handleSaveAddress = (newAddress) => {
-        api.post("/api/addresses", newAddress)
+        api.post("/addresses", newAddress)
             .then(response => {
                 setAddresses(prev => [...prev, response.data]);
                 setShowAddForm(false);
@@ -89,7 +89,7 @@ export default function Perfil() {
     // Eliminar dirección
     const handleDeleteAddress = (id) => {
         if (window.confirm("¿Estás seguro de que quieres eliminar esta dirección?")) {
-            api.delete(`/api/addresses/${id}`)
+            api.delete(`/addresses/${id}`)
                 .then(() => {
                     setAddresses(prev => prev.filter(addr => addr.id !== id));
                     alert("Dirección eliminada.");
@@ -115,7 +115,7 @@ export default function Perfil() {
 
     const handleSave = (e) => {
         e.preventDefault();
-        api.put("/api/auth/perfil", form)
+        api.put("/auth/perfil", form)
         .then(() => {
             alert("¡Perfil actualizado con éxito!");
             setOriginalForm(form);

@@ -69,10 +69,9 @@ const Login = ({ setIsAuthenticated }) => {
         if (!payload?.email) return;
 
         try {
-          const res = await api.post("/api/auth/google", {
+          const res = await api.post("auth/google", {
             email: payload.email,
-            username:
-              payload.name || payload.email.split("@")[0],
+            username: payload.name || payload.email.split("@")[0],
           });
 
           const jwt = res.data?.token;
@@ -111,7 +110,7 @@ const Login = ({ setIsAuthenticated }) => {
     setError("");
 
     try {
-      const endpoint = isRegister ? "/api/auth/register" : "/api/auth/login";
+      const endpoint = isRegister ? "auth/register" : "auth/login";
       const payload = isRegister
         ? { username, email, password }
         : { username, password };

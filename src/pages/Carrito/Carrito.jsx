@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Header from "../../components/Header/Header.jsx";
-import api from "../../api.js";
 import {
   getCarrito,
   vaciarCarrito,
@@ -12,6 +11,7 @@ import EmptyCart from "./Carrito_Vacio.jsx";
 import "./Carrito.css";
 import { Trash2, Tag, Truck } from "lucide-react";
 
+// Botones de incremento/decremento
 function DecreaseButton({ onClick }) {
   return <button className="stepper-decrease" onClick={onClick} aria-label="Disminuir">-</button>;
 }
@@ -30,7 +30,7 @@ export default function Carrito() {
   const [coupon, setCoupon] = useState("");
   const navigate = useNavigate();
 
-  // 🔹 Redirige a login si no está autenticado
+  // 🔹 Redirige a login si no hay token
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
     if (!token) navigate("/login");
@@ -41,64 +41,63 @@ export default function Carrito() {
     setProductos(getCarrito());
   }, []);
 
-  // 🔹 Ejemplo: llamada al backend con token (solo si querés probar)
-  useEffect(() => {
-    const fetchProductos = async () => {
-      try {
-        const res = await api.get("/productos");
-        console.log("Productos desde backend:", res.data);
-      } catch (err) {
-        console.error("Error al obtener productos:", err);
-      }
-    };
-    fetchProductos();
-  }, []);
+  // 🔹 Refresca carrito si cambia en otra pestaña o se dispara evento
+  const refresh = () => setProductos(getCarrito());
 
-  // 🔹 Actualiza carrito automáticamente si cambia en otra pestaña
   useEffect(() => {
-    const handleStorage = () => setProductos(getCarrito());
-    const handleCustom = () => setProductos(getCarrito());
-
-    window.addEventListener("storage", handleStorage);
-    window.addEventListener("carritoActualizado", handleCustom);
+    window.addEventListener("storage", refresh);
+    window.addEventListener("carritoActualizado", refresh);
     return () => {
-      window.removeEventListener("storage", handleStorage);
-      window.removeEventListener("carritoActualizado", handleCustom);
+      window.removeEventListener("storage", refresh);
+      window.removeEventListener("carritoActualizado", refresh);
     };
   }, []);
 
+  // 🔹 Conversión de número a ARS
   const toARS = (n) =>
     Number(n).toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
+  // 🔹 Cálculo de items y subtotal
   const { items, subtotal } = useMemo(() => {
-    const items = productos.reduce((a, p) => a + p.cantidad, 0);
-    const subtotal = productos.reduce((a, p) => a + p.price * p.cantidad, 0);
+    const items = productos.reduce((a, p) => a + Number(p.cantidad), 0);
+    const subtotal = productos.reduce((a, p) => a + Number(p.price) * Number(p.cantidad), 0);
     return { items, subtotal };
   }, [productos]);
 
+  // 🔹 Costo de envío y descuento
   const envioCosto = productos.length ? (shipping === "expres" ? 1500 : 500) : 0;
   const descuentoCup = coupon.trim().toUpperCase() === "PETA10" ? Math.round(subtotal * 0.1) : 0;
   const total = Math.max(0, subtotal - descuentoCup) + envioCosto;
 
-  const refresh = () => setProductos(getCarrito());
+  // 🔹 Handlers unificados para sumar/restar
+  const cambiarCantidad = (id, delta) => {
+    const p = productos.find(x => x.id === id);
+    if (!p) return;
+    const nuevaCantidad = p.cantidad + delta;
+    if (nuevaCantidad <= 0) {
+      quitarDelCarrito(id);
+    } else {
+      actualizarCantidad(id, nuevaCantidad);
+    }
+    refresh();
+  };
+
+  const handleSumar = id => cambiarCantidad(id, 1);
+  const handleRestar = id => cambiarCantidad(id, -1);
+
+  const handleQuitar = id => {
+    quitarDelCarrito(id);
+    refresh();
+  };
 
   const handleVaciar = () => {
     if (window.confirm("¿Vaciar carrito?")) {
       vaciarCarrito();
-      setProductos([]);
+      refresh();
     }
   };
 
-  const handleQuitar = (id) => { quitarDelCarrito(id); refresh(); };
-  const handleSumar = (id) => {
-    const p = productos.find((x) => x.id === id);
-    if (p) { actualizarCantidad(id, p.cantidad + 1); refresh(); }
-  };
-  const handleRestar = (id) => {
-    const p = productos.find((x) => x.id === id);
-    if (p && p.cantidad > 1) { actualizarCantidad(id, p.cantidad - 1); refresh(); }
-  };
-
+  // 🔹 Componente de carrito vacío
   if (productos.length === 0) {
     return (
       <div>

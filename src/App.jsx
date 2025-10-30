@@ -57,7 +57,7 @@ function App() {
         <Route path="/" element={<Home isAuthenticated={isAuthenticated} productos={products} />} />
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/producto/:id" element={<DetalleProducto />} />
-        <Route path="/categoria/:nombreCategoria" element={<Categoria isAuthenticated={isAuthenticated} productos={products} />} />
+        <Route path="/categoria/:nombreCategoria" element={<Categoria isAuthenticated={isAuthenticated} />} />
         <Route path="/buscar" element={<Buscar />} />
 
         {/* ===== Rutas protegidas (tu lógica se mantiene) ===== */}
